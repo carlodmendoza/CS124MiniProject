@@ -2,105 +2,19 @@ package maze;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
-
-import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-
+import java.util.*;
+import java.lang.reflect.*;
+import java.io.*;
 import anno.Command;
 import anno.Direction;
 
 public class MazeMaker {
-	private JFrame frame;
-	private JPanel mainPanel, commandPanel;
-	private Canvas imageArea;
-	private static JTextArea textArea;
-	private JTextField txtCommand;
-	private JButton btnHelp, btnInventory, btnGo;
+	
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	private Object currentRoom;
 	public boolean inPool, graveFound, tookSword, wordFoundRm2, babyDead, chestFound, wordFoundRm3, wordFoundRm4, isDead;
-	
-	public MazeMaker() {
-		frame = new JFrame();
-		
-		mainPanel = new JPanel();
-		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
-		imageArea = new Canvas();
-		imageArea.setPreferredSize(new Dimension(800, 200));
-		mainPanel.add(imageArea);
-		
-		textArea = new JTextArea();
-		textArea.setEditable(false);
-		textArea.setLineWrap(true);
-		mainPanel.add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		
-		commandPanel = new JPanel();
-		frame.getContentPane().add(commandPanel, BorderLayout.SOUTH);
-		
-		txtCommand = new JTextField();
-		txtCommand.setHorizontalAlignment(SwingConstants.LEFT);
-		txtCommand.setText("command");
-		commandPanel.add(txtCommand);
-		txtCommand.setColumns(75);
-		
-		btnGo = new JButton("Go");
-		commandPanel.add(btnGo);
-		btnGo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-					move(txtCommand.getText());			
-			}
-		});
-		
-		btnHelp = new JButton("Help");
-		commandPanel.add(btnHelp);
-		btnHelp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				try {
-					look();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		
-		btnInventory = new JButton("Inventory");
-		commandPanel.add(btnInventory);
-		
-		frame.setTitle("CS 124 Project");
-		frame.getContentPane().setPreferredSize(new Dimension(800, 600));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setResizable(false);
-		frame.setVisible(true);
-	}
 
-	public void load() throws Exception {
+	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -108,7 +22,7 @@ public class MazeMaker {
 			Class clazz = Class.forName(className);
 			Object instance = clazz.newInstance();
 			if (clazz.isAnnotationPresent(CheckEnter.class)) instance = new MazeIntercept().run(clazz);
-			//print("Class: " + clazz.getName() + " - Object: " + instance.toString());
+			//return "Class: " + clazz.getName() + " - Object: " + instance.toString();
 			roomMap.put(clazz, instance);
 		}
 		for (Class roomClazz : roomMap.keySet()) {
@@ -123,17 +37,19 @@ public class MazeMaker {
 			}
 		}
 		currentRoom = roomMap.get(room.Room1.class);
-		printDescription(false);
+		return printDescription(false);
 	}
 	
-	public void printDescription(boolean isRoom5) throws Exception {
+	public String printDescription(boolean isRoom5) throws Exception {
 		Method m;
 		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDescription", MazeMaker.class);
 		else m = currentRoom.getClass().getDeclaredMethod("getDescription", MazeMaker.class);
-		print(m.invoke(currentRoom, this));
+		return (String) m.invoke(currentRoom, this);
 	}
 	
-	public void move(String action) {
+	public String move(String action) {
+		StringWriter sw = new StringWriter();
+    	PrintWriter pw = new PrintWriter(sw);
 		String[] arr = action.split(" ");
 		Class clazz;
 		if (EnterCondition.class.isAssignableFrom(currentRoom.getClass())) clazz = currentRoom.getClass().getSuperclass();
@@ -149,18 +65,19 @@ public class MazeMaker {
 						Object o  = roomMap.get(fieldClass);
 						if (o instanceof EnterCondition) {
 							if(((EnterCondition) o).canEnter(this)) {
-								print(((EnterCondition) o).enterMessage());
+								pw.println(((EnterCondition) o).enterMessage());
 								currentRoom = o;
-								printDescription(true);
+								pw.print(printDescription(true));
+								
 							}
 							else {
-								print(((EnterCondition) o).unableToEnterMessage());
-								printDescription(false);
+								pw.println(((EnterCondition) o).unableToEnterMessage());
+								pw.print(printDescription(false));
 							}
 						}
 						else {
 							currentRoom = o;
-							printDescription(false);
+							pw.print(printDescription(false));
 						}
 						break;
 					}
@@ -171,17 +88,17 @@ public class MazeMaker {
 					Command c = m.getAnnotation(Command.class);	
 					if (m.getParameterCount() == 1) {
 						if (c.command().equals(action)) {
-							print(m.invoke(currentRoom, this));
+							pw.print(m.invoke(currentRoom, this));
 							break;
 						}	
 					}
 					else {
 						if (c.command().equals(arr[0])) {
 							try {
-								print(m.invoke(currentRoom, this, arr[1]));
+								pw.print(m.invoke(currentRoom, this, arr[1]));
 							}
 							catch (IndexOutOfBoundsException e) {
-								print("Retype the method and put your answer after it, separated by a space.");
+								pw.println("Retype the method and put your answer after it, separated by a space.");
 							}
 							break;
 						}
@@ -192,9 +109,11 @@ public class MazeMaker {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		if (sw.toString().equals("")) pw.println("Please enter a valid command.");
+		return sw.toString();
 	}
 	
-	public void look() throws Exception {
+	public String look() throws Exception {
 		Class clazz = currentRoom.getClass();
 		if (currentRoom instanceof EnterCondition) clazz = currentRoom.getClass().getSuperclass();
 		StringWriter sw = new StringWriter();
@@ -218,22 +137,6 @@ public class MazeMaker {
 			   else pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
 		   }
 		}
-		print(sw.toString());
-	}
-	
-	public static void print(Object in) {
-		String temp = textArea.getText();
-		if (temp.equals("")) textArea.setText((String)in);
-		else textArea.setText(temp + "\n" + (String)in);
-	}
-	
-	public static void main(String[] args) throws Exception {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			print("Error setting a native look and feel.");
-		}
-		MazeMaker maze = new MazeMaker();
-		maze.load();
+		return sw.toString();
 	}
 }
