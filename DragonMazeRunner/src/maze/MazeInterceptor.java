@@ -8,11 +8,11 @@ public class MazeInterceptor {
 	}
 	
 	public static String enterMessage() {
-		return "Welcome to the final room!";
+		return "Welcome to the final room!\n";
 	}
 	
 	public static String unableToEnterMessage() {
-		return "You cannot enter this room yet.";
+		return "You cannot enter this room yet.\n";
 	}
 
 }

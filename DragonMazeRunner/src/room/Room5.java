@@ -20,8 +20,8 @@ public class Room5 {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	count++;
-		pw.println("\nYou are in Room 5 - "+count+" times.");
-		pw.println("Type 'look' to display all the commands allowed at this room.");
+    	pw.println("You are in Room 5 - "+count+" times.");
+		pw.println("Click 'Help' to display all the commands available at this room.");
 		if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) {
             pw.println("\nYou enter a long tunnel which opens into a large chamber.");  
             pw.println("You can see an opening to the outside on the other side.");
@@ -32,23 +32,6 @@ public class Room5 {
             maze.isDead = true;
         }
         return sw.toString();
-	}
-	
-	public String look(Class clazz) throws Exception {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-		for (Field f: clazz.getDeclaredFields()) {
-		   Direction anno = f.getAnnotation(Direction.class);
-		   if (anno != null) pw.println("- " + anno.toString().substring(24, anno.toString().length() - 1));
-		}
-		for (Method m: clazz.getDeclaredMethods()) {
-		   Command anno = m.getAnnotation(Command.class);
-		   if (anno != null) {
-			   if (m.getParameterCount() == 2) pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1) + " <String>");
-			   else pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
-		   }
-		}
-		return sw.toString();
 	}
 	
 	@Command(command="passphrase") 

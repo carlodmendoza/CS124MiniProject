@@ -56,6 +56,7 @@ public class MazeMaker {
 		
 		textArea = new JTextArea();
 		textArea.setEditable(false);
+		textArea.setLineWrap(true);
 		mainPanel.add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		
 		commandPanel = new JPanel();
@@ -69,6 +70,11 @@ public class MazeMaker {
 		
 		btnGo = new JButton("Go");
 		commandPanel.add(btnGo);
+		btnGo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+					move(txtCommand.getText());			
+			}
+		});
 		
 		btnHelp = new JButton("Help");
 		commandPanel.add(btnHelp);
@@ -88,8 +94,8 @@ public class MazeMaker {
 		frame.setTitle("CS 124 Project");
 		frame.getContentPane().setPreferredSize(new Dimension(800, 600));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
 		frame.pack();
+		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setVisible(true);
 	}
@@ -102,7 +108,7 @@ public class MazeMaker {
 			Class clazz = Class.forName(className);
 			Object instance = clazz.newInstance();
 			if (clazz.isAnnotationPresent(CheckEnter.class)) instance = new MazeIntercept().run(clazz);
-			print("Class: " + clazz.getName() + " - Object: " + instance.toString());
+			//print("Class: " + clazz.getName() + " - Object: " + instance.toString());
 			roomMap.put(clazz, instance);
 		}
 		for (Class roomClazz : roomMap.keySet()) {
@@ -193,14 +199,24 @@ public class MazeMaker {
 		if (currentRoom instanceof EnterCondition) clazz = currentRoom.getClass().getSuperclass();
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("What would Jesus do?");
+    	pw.println("What do you want to do?");
 		for (Field f: clazz.getDeclaredFields()) {
 		   Direction anno = f.getAnnotation(Direction.class);
 		   if (anno != null) pw.println("- " + anno.toString().substring(24, anno.toString().length() - 1));
 		}
 		for (Method m: clazz.getDeclaredMethods()) {
 		   Command anno = m.getAnnotation(Command.class);
-		   if (anno != null) pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
+		   if (anno != null) {
+			   if (clazz.getSimpleName().equals("Room4")) {
+				   if (m.getParameterCount() == 2) pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1) + " <int>");
+				   else pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
+			   }
+			   else if (clazz.getSimpleName().equals("Room5")) {
+				   if (m.getParameterCount() == 2) pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1) + " <String>");
+				   else pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
+			   }
+			   else pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
+		   }
 		}
 		print(sw.toString());
 	}
@@ -217,16 +233,7 @@ public class MazeMaker {
 		} catch (Exception e) {
 			print("Error setting a native look and feel.");
 		}
-		
 		MazeMaker maze = new MazeMaker();
 		maze.load();
-		Scanner scanner = new Scanner(System.in);
-		while (true) {
-			if (maze.isDead) break;
-			String text = scanner.nextLine();
-			if (text.equals("exit")) break;
-			else if (text.equals("look")) maze.look();
-			else maze.move(text);
-		}		
 	}
 }

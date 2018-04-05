@@ -21,28 +21,14 @@ public class Room3 {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	count++;
-		pw.println("\nYou are in Room 3 - "+count+" times.");
-		pw.println("Type 'look' to display all the commands allowed at this room.");
+    	pw.println("You are in Room 3 - "+count+" times.");
+		pw.println("Click 'Help' to display all the commands available at this room.");
 		if (!maze.babyDead) {
 			pw.println("\nYou enter a large cavern and hear deep laboured breathing.");
 	        pw.println("In the center of the chamber is a small baby dragon sleeping on a big pile of gold coins.");
 		} else pw.println("\nYou enter a large cavern and see the dead baby dragon.");	
         if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5 at your north.");
         return sw.toString();
-	}
-	
-	public String look(Class clazz) throws Exception {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-		for (Field f: clazz.getDeclaredFields()) {
-		   Direction anno = f.getAnnotation(Direction.class);
-		   if (anno != null) pw.println("- " + anno.toString().substring(24, anno.toString().length() - 1));
-		}
-		for (Method m: clazz.getDeclaredMethods()) {
-		   Command anno = m.getAnnotation(Command.class);
-		   if (anno != null) pw.println("- " + anno.toString().substring(22, anno.toString().length() - 1));
-		}
-		return sw.toString();
 	}
 	
 	@Command(command="attack")

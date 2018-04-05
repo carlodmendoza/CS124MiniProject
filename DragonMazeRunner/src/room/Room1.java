@@ -18,8 +18,8 @@ public class Room1 {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	count++;
-		pw.println("\nYou are in Room 1 - "+count+" times.");
-		pw.println("Type 'look' to display all the commands allowed at this room.");
+		pw.println("You are in Room 1 - "+count+" times.");
+		pw.println("Click 'Help' to display all the commands available at this room.");
         pw.println("\nYou find yourself inside a dark room. At your north, you see a door marked Room 2.");
         if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5.");
         return sw.toString();
