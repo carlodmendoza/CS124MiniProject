@@ -42,7 +42,11 @@ public class MazeGUI {
 		commandPanel.add(btnGo);
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				print(maze.move(txtCommand.getText()));			
+				try {
+					print(maze.move(txtCommand.getText()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}			
 			}
 		});
 		
@@ -51,7 +55,7 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					print(maze.look());
+					print(maze.showCommands());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -60,6 +64,15 @@ public class MazeGUI {
 		
 		btnInventory = new JButton("Inventory");
 		commandPanel.add(btnInventory);
+		btnInventory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					print(maze.showItems());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public static void print(String in) {

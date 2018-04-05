@@ -44,6 +44,7 @@ public class Room2 {
     	if (!maze.tookSword) {
 	        if (maze.inPool) {
 	            maze.tookSword = true;
+	            maze.items.add("sword");
 	            pw.println("You take the bright shiny sword."); 
 	        }
 	        else pw.println("What sword?");
@@ -75,6 +76,7 @@ public class Room2 {
         } else {
         	if (!maze.wordFoundRm2) {
 	            maze.wordFoundRm2 = true;
+	            maze.items.add("secret word 1");
 	            pw.println("You dig up the grave and find a skeleton holding a scroll. It contains 3 words but 2 are unreadable. The remaining word says 'Zam'.");
 	            if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5.");
         	} else pw.println("You already dug up the grave.");

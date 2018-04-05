@@ -29,14 +29,14 @@ public class Room4 {
 	}
 	
 	@Command(command="answer")
-	public String answer(MazeMaker maze, String ans) {
+	public String answer(MazeMaker maze, int ans) {
     	StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	if (!maze.wordFoundRm4) {
     		try {
-    			Integer finalAns = Integer.parseInt(ans);
-    			if (finalAns==x*y) {
+    			if (ans==x*y) {
     	            maze.wordFoundRm4 = true;
+    	            maze.items.add("secret word 3");
     	            pw.println("A low voice reverberates the word 'Ka' and fades away.");
     	            if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5.");
     	        }

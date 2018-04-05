@@ -69,6 +69,7 @@ public class Room3 {
     	if (maze.chestFound) {
     		if (!maze.wordFoundRm3) {
 	            maze.wordFoundRm3 = true;
+	            maze.items.add("secret word 2");
 	            pw.println("Inside is a book. A page is ear-marked and the word 'Ala' written in blood.");
 	            if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5 at your north.");
     		} else pw.println("You already opened the chest.");
