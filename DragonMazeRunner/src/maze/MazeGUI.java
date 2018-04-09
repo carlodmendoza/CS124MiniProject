@@ -37,7 +37,7 @@ public class MazeGUI {
 		txtCommand = new JTextField();
 		txtCommand.setHorizontalAlignment(SwingConstants.LEFT);
 		commandPanel.add(txtCommand);
-		txtCommand.setColumns(45);
+		txtCommand.setColumns(40);
 		
 		txtCommand.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
