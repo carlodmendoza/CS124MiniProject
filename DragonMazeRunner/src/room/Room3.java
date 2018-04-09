@@ -16,7 +16,6 @@ public class Room3 {
 	private String dialogue;
 	public boolean isDialogueFinished, hasTaken;
 	
-	
 	public Room3() {
 		hasTaken = false;
 		dialogue = "Phoenix: (Hmmm... doesn\'t seem like a busy day in the homicide division. Guess Detective Gumshoe isn\'t here.)\n"

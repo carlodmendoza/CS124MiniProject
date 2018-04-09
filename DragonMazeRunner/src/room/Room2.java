@@ -18,7 +18,7 @@ public class Room2 {
 	public Room2() {
 		hasTalked = false;
 		isDialogueFinished = false;
-		dialogue = "Phoenix: This office never ceases to feel so gaudy. Perhaps I should talk to grossberg first.";
+		dialogue = "Phoenix: This office never ceases to feel so gaudy. Perhaps I should talk to grossberg first.\n";
 		sc = new Scanner(dialogue);
 	}
 	
