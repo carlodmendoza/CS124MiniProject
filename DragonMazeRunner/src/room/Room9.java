@@ -1,5 +1,5 @@
 package room;
 
-public class Room5 {
+public class Room9 {
 
 }

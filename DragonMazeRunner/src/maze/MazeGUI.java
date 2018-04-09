@@ -15,26 +15,7 @@ public class MazeGUI {
 	
 	public MazeGUI(MazeMaker maze) {
 		frame = new JFrame();
-		frame.getContentPane().addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-					try {
-						print(maze.move(txtCommand.getText()));
-						imageArea.changeImg(maze.getRoomImg(false));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}	
-				}
-			}
-			public void keyReleased(KeyEvent ke) {
-				
-			}
-			public void keyTyped(KeyEvent ke) {
-				
-			}
-		});
-		frame.getContentPane().setFocusable(true);
-		
+
 		mainPanel = new JPanel();
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -55,19 +36,19 @@ public class MazeGUI {
 		
 		txtCommand = new JTextField();
 		txtCommand.setHorizontalAlignment(SwingConstants.LEFT);
-		txtCommand.setText("command");
 		commandPanel.add(txtCommand);
 		txtCommand.setColumns(45);
+		
 		txtCommand.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				frame.getContentPane().setFocusable(true);
 				txtCommand.setText("");
 			}
 			public void focusLost(FocusEvent e) {
-				txtCommand.setText("command");
+				
 			}
-			
 		});
+		
 		txtCommand.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -85,6 +66,30 @@ public class MazeGUI {
 			public void keyTyped(KeyEvent ke) {
 				
 			}
+		});
+		
+		txtCommand.addMouseListener(new MouseListener() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == 1) txtCommand.setText("");
+			}
+			public void mouseEntered(MouseEvent e) {
+				
+			}
+			public void mouseExited(MouseEvent e) {
+	
+			}
+			public void mousePressed(MouseEvent e) {
+
+			}
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+		});
+		
+		frame.addWindowListener(new WindowAdapter() {
+		    public void windowOpened(WindowEvent e){
+		        txtCommand.requestFocus();
+		    }
 		});
 		
 		btnGo = new JButton("Go");
@@ -105,7 +110,8 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					print(maze.showCommands());
+					if (!maze.isDialogueFinished()) print("You have to finish the conversation first.\n");
+					else print(maze.showCommands());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -150,6 +156,4 @@ public class MazeGUI {
 		gui.frame.setResizable(false);
 		gui.frame.setVisible(true);		
 	}
-
-
 }

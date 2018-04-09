@@ -1,59 +1,71 @@
 package room;
 
-import anno.Direction;
-import anno.Command;
-import maze.MazeGUI;
 import maze.MazeMaker;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import anno.*;
+import java.io.*;
 import java.util.Scanner;
 
 public class Room2 {
-	@Direction(command="goto grossbergOffice")
-	private Room2 room2;
+	@Direction(command="wrightOffice")
+	private Room1 room1;
+	@Direction(command="policeStation")
+	private Room3 room3;
 	private Scanner sc;
-	private String dialog;
+	private String dialogue;
+	private boolean hasTalked;
+	public boolean isDialogueFinished;
 	
 	public Room2() {
-		dialog = "August 3, 09:00 AM - Wright & Co. Law Offices\n"
-				+ "Phoenix: (My name is Phoenix Wright. Here’s the story: My first case is a somewhat complicated one. A young bellboy over at the Gatewater Hotel was killed "
-				+ "in the very hotel he loyally served. There are way too many suspects, and one of them is an unlucky sap who just happened to be in the wrong place at the"
-				+ " wrong time: my best friend since grade school, Larry Butz. It’s been true for that “When something smells, it’s usually the Butz,” but I know better than "
-				+ "anyone that he would never commit murder.)\n"
-        		+ "The victim was murdered in the police station parking lot. His cause of death was multiple stab wounds to the chest.\n" 
-				+ "Anyway… The trial’s tomorrow, I’m still lacking evidence, and Chief’s away on a business trip. Guess I’ll be gathering evidence alone, huh…\n" 
-        		+ "Maybe I can go to Chief’s friend, Mr. Grossberg, for advice.\n";
-		sc = new Scanner(dialog);
+		hasTalked = false;
+		isDialogueFinished = false;
+		dialogue = "Phoenix: This office never ceases to feel so gaudy. Perhaps I should talk to grossberg first.";
+		sc = new Scanner(dialogue);
 	}
 	
-	public String getDescription(MazeMaker maze) {	
+	public String getDescription(MazeMaker maze) {
+		StringWriter sw = new StringWriter();
+    	PrintWriter pw = new PrintWriter(sw);
+    	pw.println("August 3, 09:04 AM - Grossberg Law Offices");
+    	if (!isDialogueFinished) pw.println("\nPress enter to advance text.");
+    	
+    	return sw.toString();
+	}
+	
+	public String getDialogue() {	
+		if (isDialogueFinished)
+			return "Please enter a valid command.";
+		
 		if (!sc.hasNext()) {
-			return " -- End of conversation --";
+			isDialogueFinished = true;
+			return "-- End of text --\n\nNow enter a valid command.";
 		}
+	
 		return sc.nextLine();
 	}
 	
-	public String getRoomImg(MazeMaker maze) {
-		return "2.png";
+	public String getRoomImg() {
+		if (!hasTalked)
+			return "2.png";
+		else
+			return "2-grossberg.png";
 	}
 	
-	@Command(command="dig")
-	public String dig(MazeMaker maze) {
-    	StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-        if (!maze.graveFound) {
-            pw.println("You dig into the ground and disturb the home of a poisonous snake. It bites and you die... The End.");
-            maze.isDead = true;
-        } else {
-        	if (!maze.wordFoundRm2) {
-	            maze.wordFoundRm2 = true;
-	            maze.items.add("secret word 1");
-	            pw.println("You dig up the grave and find a skeleton holding a scroll. It contains 3 words but 2 are unreadable. The remaining word says 'Zam'.");
-	            if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5.");
-        	} else pw.println("You already dug up the grave.");
-        }
-        return sw.toString();
+	@Command(command="talkto grossberg")
+	public String talk(MazeMaker maze) {
+		isDialogueFinished = false;
+    	dialogue = "Grossberg: *Ah-HHHHEM!*\n" 
+				+ "Phoenix: Mr. Grossberg! I’m glad to see you. I need some help finding evidence.\n" 
+				+ "Grossberg: Wright, my boy. You don’t need a veteran like me to tell you that you have to start looking around in the field and not in other people’s offices. " 
+				+ "No offense.\n" 
+				+ "Well, this does remind me of myself when I was a youth! \"Ah... the days of my youth... like the scent of fresh lemon...\" My boy, I suggest you start by making " 
+				+ "your way to the police station to get some useful advice.\n" 
+				+ "Phoenix: Thanks, sir. I’ll get back to you if I get more clues.\n" 
+				+ "Grossberg: *groan* (My hemorrhoids are beginning to act up…) Hmph, make haste, my boy!\n";
+    	if (!hasTalked) {
+    		sc = new Scanner(dialogue);
+    		hasTalked = true;
+    	}
+    	
+    	return getDialogue();
     }
 }

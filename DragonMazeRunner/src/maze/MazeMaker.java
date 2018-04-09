@@ -11,9 +11,8 @@ import anno.Direction;
 public class MazeMaker {
 	
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
-	private Object currentRoom;
-	public ArrayList<String> items = new ArrayList<String>();
-	public boolean inPool, graveFound, tookSword, wordFoundRm2, babyDead, chestFound, wordFoundRm3, wordFoundRm4, isDead;
+	public Object currentRoom;
+	public HashMap<String, String> items = new HashMap<String, String>();
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
@@ -41,85 +40,146 @@ public class MazeMaker {
 		}
 		
 		currentRoom = roomMap.get(room.Room1.class);
-		return printDescription(false) + "\n";
+		
+		return printDescription(false);
 	}
 	
 	public String printDescription(boolean isRoom5) throws Exception {
 		Method m;
 		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDescription", MazeMaker.class);
 		else m = currentRoom.getClass().getDeclaredMethod("getDescription", MazeMaker.class);
+		
 		return (String) m.invoke(currentRoom, this);
+	}
+	
+	public String printDialogue(boolean isRoom5) throws Exception {
+		Method m;
+		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDialogue");
+		else m = currentRoom.getClass().getDeclaredMethod("getDialogue");
+		
+		return (String) m.invoke(currentRoom);
 	}
 	
 	public String getRoomImg(boolean isRoom5) throws Exception {
 		Method m;
-		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getRoomImg", MazeMaker.class);
-		else m = currentRoom.getClass().getDeclaredMethod("getRoomImg", MazeMaker.class);
-		return (String) m.invoke(currentRoom, this);
+		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getRoomImg");
+		else m = currentRoom.getClass().getDeclaredMethod("getRoomImg");
+		
+		return (String) m.invoke(currentRoom);
 	}
 	
 	public String move(String action) throws Exception {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
-		String[] arr = action.split(" ");
+    	String arr[] = action.split(" ");
 		
 		Class clazz;
 		if (EnterCondition.class.isAssignableFrom(currentRoom.getClass())) clazz = currentRoom.getClass().getSuperclass();
 		else clazz = currentRoom.getClass();	
 		
-		Field[] fields = clazz.getDeclaredFields();
-		Method[] methods = clazz.getDeclaredMethods();
-		
-		for (Field f : fields) {
-			if (f.isAnnotationPresent(Direction.class)) {
-				Direction d = f.getAnnotation(Direction.class);
-				if (d.command().equals(action)) {
-					Class fieldClass = f.getType();
-					Object o  = roomMap.get(fieldClass);
-					if (o instanceof EnterCondition) {
-						if(((EnterCondition) o).canEnter(this)) {
-							pw.println(((EnterCondition) o).enterMessage());
-							currentRoom = o;
-							pw.print(printDescription(true));
+		if (arr[0].equals("goto")) {
+			Field[] fields = clazz.getDeclaredFields();
+			
+			for (Field f : fields) {
+				if (f.isAnnotationPresent(Direction.class)) {
+					Direction d = f.getAnnotation(Direction.class);
+					try {
+						if (d.command().equals(arr[1])) {
+							Class fieldClass = f.getType();
+							Object o  = roomMap.get(fieldClass);
+							if (o instanceof EnterCondition) {
+								if(((EnterCondition) o).canEnter(this)) {
+									pw.println(((EnterCondition) o).enterMessage());
+									currentRoom = o;
+									pw.print(printDescription(true));
+								}
+								else {
+									pw.println(((EnterCondition) o).unableToEnterMessage());
+									pw.print(printDescription(false));
+								}
+							}
+							else {
+								currentRoom = o;
+								pw.print(printDescription(false));
+							}
+							break;
 						}
-						else {
-							pw.println(((EnterCondition) o).unableToEnterMessage());
-							pw.print(printDescription(false));
-						}
+					} catch (ArrayIndexOutOfBoundsException e) {
+						pw.println("Go to where?");
 					}
-					else {
-						currentRoom = o;
-						pw.println(printDescription(false));
-					}
-					break;
 				}
+			}
+			try {
+				if (sw.toString().equals("")) pw.println("Where is " + arr[1] + "?");
+			} catch (ArrayIndexOutOfBoundsException e) {
+				pw.println("Go to where?");
 			}
 		}
 		
-		for (Method m : methods) {
-			if (m.isAnnotationPresent(Command.class)) {
-				Command c = m.getAnnotation(Command.class);	
-				if (m.getParameterCount() == 1) {
+		else if (arr[0].equals("take")) {
+			Method[] methods = clazz.getDeclaredMethods();
+			for (Method m : methods) {
+				if (m.isAnnotationPresent(Command.class)) {
+					Command c = m.getAnnotation(Command.class);
 					if (c.command().equals(action)) {
-						pw.print(m.invoke(currentRoom, this));
-						break;
-					}	
-				}
-				else {
-					if (c.command().equals(arr[0])) {
-						try {
-							pw.print(m.invoke(currentRoom, this, arr[1]));
-						}
-						catch (IndexOutOfBoundsException e) {
-							pw.println("Retype the method and put your answer after it, separated by a space.");
-						}
+						pw.println(m.invoke(currentRoom, this));
 						break;
 					}
 				}
 			}
+			try {
+				if (sw.toString().equals("")) pw.println("What " + arr[1] + "?");
+			} catch (ArrayIndexOutOfBoundsException e) {
+				pw.println("Take what?");
+			}
 		}
 		
-		if (sw.toString().equals("")) pw.println(printDescription(false));
+		else if (arr[0].equals("use")) {
+			if (items.isEmpty()) {
+				pw.println("Phoenix: (I don't have any items yet.)");
+				return sw.toString();
+			}
+			Method[] methods = clazz.getDeclaredMethods();
+			for (Method m : methods) {
+				if (m.isAnnotationPresent(Command.class)) {
+					Command c = m.getAnnotation(Command.class);
+					try {
+						if (c.command().equals(arr[1])) {
+							pw.println(m.invoke(currentRoom, this));
+							break;
+						}
+					} catch (Exception e) {
+						pw.println("Use what?");
+					}
+				}
+			}
+			if (sw.toString().equals("")) pw.println("Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!').");
+		}
+		
+		else if (arr[0].equals("desc")) {
+			if (items.isEmpty()) {
+				pw.println("Phoenix: (I don't have any items yet.)");
+				return sw.toString();
+			}
+			if (findItem(arr[1])) pw.println(items.get(arr[1]));
+			else pw.println("Phoenix: (I don't have that item.)");
+		}
+
+		else {
+			Method[] methods = clazz.getDeclaredMethods();
+			for (Method m : methods) {
+				if (m.isAnnotationPresent(Command.class)) {
+					Command c = m.getAnnotation(Command.class);
+					if (c.command().equals(action)) {
+						pw.println(m.invoke(currentRoom, this));
+						break;
+					} 
+				}
+			}
+		}
+			
+		if (sw.toString().equals("")) pw.println(printDialogue(false));
+		
 		return sw.toString();
 	}
 	
@@ -133,24 +193,19 @@ public class MazeMaker {
 		
     	pw.println("Available commands:");
     	
+    	for (String item : items.keySet()) {
+    		pw.println(++count + ". use " + item);
+    		pw.println(++count + ". desc " + item);
+    	}
+    	
 		for (Field f : clazz.getDeclaredFields()) {
 		   Direction anno = f.getAnnotation(Direction.class);
-		   if (anno != null) pw.println(++count + ". " + anno.command());
+		   if (anno != null) pw.println(++count + ". goto " + anno.command());
 		}
 		
 		for (Method m : clazz.getDeclaredMethods()) {
 		   Command anno = m.getAnnotation(Command.class);
-		   if (anno != null) {
-			   if (clazz.getSimpleName().equals("Room4")) {
-				   if (m.getParameterCount() == 2) pw.println(++count + ". " + anno.command() + " <" + m.getParameterTypes()[1] + ">");
-				   else pw.println("- " + anno.command());
-			   }
-			   else if (clazz.getSimpleName().equals("Room5")) {
-				   if (m.getParameterCount() == 2) pw.println(++count + ". " + anno.command() + " <String>");
-				   else pw.println("- " + anno.command());
-			   }
-			   else pw.println(++count + ". " + anno.command());
-		   }
+		   if (anno != null) pw.println(++count + ". " + anno.command());
 		}
 		
 		return sw.toString();
@@ -162,12 +217,27 @@ public class MazeMaker {
     	int count = 0;
    
     	pw.println("Court Record:");
-    	
-		for (String item: items) {
+		for (String item: items.keySet()) {
 			pw.println(++count + ". " + item);
 		}
 		
-		if (items.isEmpty()) pw.println("You currently have no items.");
+		if (items.isEmpty()) pw.println("The court record is empty.");
+		
 		return sw.toString();
+	}
+	
+	public boolean findItem(String name) {
+		for (String s : items.keySet()) {
+			if (s.equals(name)) return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean isDialogueFinished() throws Exception {
+		Class clazz = currentRoom.getClass();
+		Field f = clazz.getDeclaredField("isDialogueFinished");
+		
+		return f.getBoolean(currentRoom);
 	}
 }
