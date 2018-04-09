@@ -41,13 +41,20 @@ public class MazeMaker {
 		}
 		
 		currentRoom = roomMap.get(room.Room1.class);
-		return printDescription(false);
+		return printDescription(false) + "\n";
 	}
 	
 	public String printDescription(boolean isRoom5) throws Exception {
 		Method m;
 		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDescription", MazeMaker.class);
 		else m = currentRoom.getClass().getDeclaredMethod("getDescription", MazeMaker.class);
+		return (String) m.invoke(currentRoom, this);
+	}
+	
+	public String getRoomImg(boolean isRoom5) throws Exception {
+		Method m;
+		if (isRoom5) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getRoomImg", MazeMaker.class);
+		else m = currentRoom.getClass().getDeclaredMethod("getRoomImg", MazeMaker.class);
 		return (String) m.invoke(currentRoom, this);
 	}
 	
@@ -82,7 +89,7 @@ public class MazeMaker {
 					}
 					else {
 						currentRoom = o;
-						pw.print(printDescription(false));
+						pw.println(printDescription(false));
 					}
 					break;
 				}
@@ -112,7 +119,7 @@ public class MazeMaker {
 			}
 		}
 		
-		if (sw.toString().equals("")) pw.println("Please enter a valid command.");
+		if (sw.toString().equals("")) pw.println(printDescription(false));
 		return sw.toString();
 	}
 	
@@ -154,7 +161,7 @@ public class MazeMaker {
     	PrintWriter pw = new PrintWriter(sw);
     	int count = 0;
    
-    	pw.println("Inventory:");
+    	pw.println("Court Record:");
     	
 		for (String item: items) {
 			pw.println(++count + ". " + item);

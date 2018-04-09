@@ -2,69 +2,42 @@ package room;
 
 import anno.Direction;
 import anno.Command;
+import maze.MazeGUI;
 import maze.MazeMaker;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Scanner;
 
 public class Room2 {
-	@Direction(command="go south")
-	private Room1 room1;
-	@Direction(command="go east")
-	private Room3 room3;
-	private int count = 0;
+	@Direction(command="goto grossbergOffice")
+	private Room2 room2;
+	private Scanner sc;
+	private String dialog;
 	
-	public String getDescription(MazeMaker maze) {	
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	count++;
-    	pw.println("You are in Room 2 - "+count+" times.");
-		pw.println("Click 'Help' to display all the commands available at this room.");
-		pw.println("\nThe door leads down to some steps into an underground cave system. There is a deep pool in the middle of the cave.");
-		if (!maze.tookSword) pw.println("You see something shiny at the bottom of the pool.");
-		if (maze.wordFoundRm2 && maze.wordFoundRm3 && maze.wordFoundRm4) pw.println("\nYou may now access secret Room 5.");
-        return sw.toString();
+	public Room2() {
+		dialog = "August 3, 09:00 AM - Wright & Co. Law Offices\n"
+				+ "Phoenix: (My name is Phoenix Wright. Here’s the story: My first case is a somewhat complicated one. A young bellboy over at the Gatewater Hotel was killed "
+				+ "in the very hotel he loyally served. There are way too many suspects, and one of them is an unlucky sap who just happened to be in the wrong place at the"
+				+ " wrong time: my best friend since grade school, Larry Butz. It’s been true for that “When something smells, it’s usually the Butz,” but I know better than "
+				+ "anyone that he would never commit murder.)\n"
+        		+ "The victim was murdered in the police station parking lot. His cause of death was multiple stab wounds to the chest.\n" 
+				+ "Anyway… The trial’s tomorrow, I’m still lacking evidence, and Chief’s away on a business trip. Guess I’ll be gathering evidence alone, huh…\n" 
+        		+ "Maybe I can go to Chief’s friend, Mr. Grossberg, for advice.\n";
+		sc = new Scanner(dialog);
 	}
 	
-	@Command(command="swim")
-	public String swim(MazeMaker maze) {
-    	StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	maze.inPool = true;
-    	if (!maze.tookSword) pw.println("You find a shiny sword at the bottom.");
-    	else pw.println("You see nothing else of interest.");
-        return sw.toString();
-    }
+	public String getDescription(MazeMaker maze) {	
+		if (!sc.hasNext()) {
+			return " -- End of conversation --";
+		}
+		return sc.nextLine();
+	}
 	
-	@Command(command="take sword")
-	public String takeSword(MazeMaker maze) {
-    	StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	if (!maze.tookSword) {
-	        if (maze.inPool) {
-	            maze.tookSword = true;
-	            maze.items.add("sword");
-	            pw.println("You take the bright shiny sword."); 
-	        }
-	        else pw.println("What sword?");
-    	} else pw.println("You already took the sword.");
-        return sw.toString();
-    }
-	
-	@Command(command="look around")
-	public String lookAround(MazeMaker maze) {
-    	StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw); 
-    	maze.inPool = false;
-        if (!maze.graveFound) {
-            maze.graveFound = true;
-            pw.println("You find a pile rubble. It looks like a shallow grave.");
-        } else {
-            pw.println("You see nothing else of interest.");
-        }
-        return sw.toString();
-    }
+	public String getRoomImg(MazeMaker maze) {
+		return "2.png";
+	}
 	
 	@Command(command="dig")
 	public String dig(MazeMaker maze) {

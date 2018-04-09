@@ -8,25 +8,46 @@ public class MazeGUI {
 	
 	private JFrame frame;
 	private JPanel mainPanel, commandPanel;
-	private Canvas imageArea;
+	public DrawingCanvas imageArea;
 	private static JTextArea textArea;
 	private JTextField txtCommand;
 	private JButton btnHelp, btnInventory, btnGo;
 	
 	public MazeGUI(MazeMaker maze) {
 		frame = new JFrame();
+		frame.getContentPane().addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+					try {
+						print(maze.move(txtCommand.getText()));
+						imageArea.changeImg(maze.getRoomImg(false));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}	
+				}
+			}
+			public void keyReleased(KeyEvent ke) {
+				
+			}
+			public void keyTyped(KeyEvent ke) {
+				
+			}
+		});
+		frame.getContentPane().setFocusable(true);
 		
 		mainPanel = new JPanel();
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
-		imageArea = new Canvas();
-		imageArea.setPreferredSize(new Dimension(800, 200));
+		imageArea = new DrawingCanvas();
+		imageArea.changeImg("1.png");
+		imageArea.setPreferredSize(new Dimension(800, 45));
 		mainPanel.add(imageArea);
 		
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
 		mainPanel.add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		
 		commandPanel = new JPanel();
@@ -36,7 +57,35 @@ public class MazeGUI {
 		txtCommand.setHorizontalAlignment(SwingConstants.LEFT);
 		txtCommand.setText("command");
 		commandPanel.add(txtCommand);
-		txtCommand.setColumns(75);
+		txtCommand.setColumns(45);
+		txtCommand.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				frame.getContentPane().setFocusable(true);
+				txtCommand.setText("");
+			}
+			public void focusLost(FocusEvent e) {
+				txtCommand.setText("command");
+			}
+			
+		});
+		txtCommand.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+					try {
+						print(maze.move(txtCommand.getText()));
+						imageArea.changeImg(maze.getRoomImg(false));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}	
+				}
+			}
+			public void keyReleased(KeyEvent ke) {
+				
+			}
+			public void keyTyped(KeyEvent ke) {
+				
+			}
+		});
 		
 		btnGo = new JButton("Go");
 		commandPanel.add(btnGo);
@@ -44,12 +93,13 @@ public class MazeGUI {
 			public void actionPerformed(ActionEvent ae) {
 				try {
 					print(maze.move(txtCommand.getText()));
+					imageArea.changeImg(maze.getRoomImg(false));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}			
 			}
 		});
-		
+				
 		btnHelp = new JButton("Help");
 		commandPanel.add(btnHelp);
 		btnHelp.addActionListener(new ActionListener() {
@@ -62,7 +112,7 @@ public class MazeGUI {
 			}
 		});
 		
-		btnInventory = new JButton("Inventory");
+		btnInventory = new JButton("Court Record");
 		commandPanel.add(btnInventory);
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
