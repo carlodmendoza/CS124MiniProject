@@ -69,6 +69,6 @@ public class Room5 {
 	public String takeCamera(MazeMaker maze) {
 		if(maze.findItem("camera")) return "Phoenix: (I already took the camera...)";
 		maze.items.put("camera", "A camera bag containing a high-tech DSLR. There are green fibers and red strands of hair in various parts of the bag."); 
-		return "Phoenix: This camera bag... I\'ve got a bad feeling about this... I think I know who owns this... Maybe I should pay the forestLake a visit.";
+		return "Phoenix: This camera bag... I\'ve got a bad feeling about this... I think I know who owns this...";
 	}
 }

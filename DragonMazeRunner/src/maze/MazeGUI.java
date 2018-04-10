@@ -54,7 +54,8 @@ public class MazeGUI {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
 						print(maze.move(txtCommand.getText()));
-						imageArea.changeImg(maze.getRoomImg(false));
+						if (maze.isInRoom10 || maze.isInRoom8) imageArea.changeImg(maze.getRoomImg(true));
+						else imageArea.changeImg(maze.getRoomImg(false));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
@@ -98,7 +99,8 @@ public class MazeGUI {
 			public void actionPerformed(ActionEvent ae) {
 				try {
 					print(maze.move(txtCommand.getText()));
-					imageArea.changeImg(maze.getRoomImg(false));
+					if (maze.isInRoom10 || maze.isInRoom8) imageArea.changeImg(maze.getRoomImg(true));
+					else imageArea.changeImg(maze.getRoomImg(false));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}			
@@ -110,8 +112,14 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (!maze.isDialogueFinished()) print("You have to finish the conversation first.\n");
-					else print(maze.showCommands());
+					if (maze.isInRoom10 || maze.isInRoom8) {
+						if (!maze.isDialogueFinished(true)) print("You have to finish the conversation first.\n");
+						else print(maze.showCommands());
+					}
+					else {
+						if (!maze.isDialogueFinished(false)) print("You have to finish the conversation first.\n");
+						else print(maze.showCommands());
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

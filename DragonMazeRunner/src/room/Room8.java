@@ -1,12 +1,13 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
-import anno.Command;
-import anno.Direction;
+import maze.CheckEnter;
 import maze.MazeMaker;
+import java.io.*;
+import anno.*;
 
+
+@CheckEnter
 public class Room8 {
 	@Direction(command="edgeworthOffice")
 	private Room7 room7;
@@ -38,7 +39,7 @@ public class Room8 {
 	public String getDescription(MazeMaker maze) {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 3, 11:00 AM - Police Station -- Evidence Room");
+    	pw.println("August 3, 11:00 AM - Evidence Room");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
     	
     	return sw.toString();

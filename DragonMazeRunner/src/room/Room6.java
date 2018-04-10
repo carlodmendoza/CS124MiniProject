@@ -53,11 +53,11 @@ public class Room6 {
 	
 	@Command(command="give camera")
 	public String giveCamera(MazeMaker maze) {
-		if(!maze.findItem("camera")) return "Phoenix: I don't even have your camera...";
+		if(!maze.findItem("camera") && !maze.gaveCamera) return "Phoenix: I don't even have your camera...";
 		maze.items.remove("camera");
 		maze.gaveCamera = true;
 		if(dialogueCount >= dialogue.length) {
-			if(!maze.findItem("camera")) return "Phoenix: (I already gave her the camera...)";
+			if(maze.gaveCamera) return "Phoenix: (I already gave her the camera...)";
 			return getDialogue();
 		}
     	return dialogue[dialogueCount++];
