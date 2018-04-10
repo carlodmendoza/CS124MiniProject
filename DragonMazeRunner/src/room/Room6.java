@@ -1,11 +1,8 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import anno.Command;
-import anno.Direction;
 import maze.MazeMaker;
+import anno.*;
+import java.io.*;
 
 public class Room6 {
 	@Direction(command="sideRoom")
@@ -24,7 +21,6 @@ public class Room6 {
 		dialogue[0] = "Lotta: Well if it isn\'t that blue hedgehog! What in tarnation are ya doin\' in the middle of nowhere? And what\'s that bag ya got? Hmmm?";
 		dialogue[1] = "Phoenix: Hi, Lotta...Hart. Look, I didn\'t steal your camera, I was just told to give it to you.";
 		dialogue[2] = "Lotta: Give it to me!! My baby...";
-		// [use camera]
 		dialogue[3] = "Lotta: Thanks y\'all. I was just gonna get ready to go over to that red guy\'s office with my camera--wait! Forget I said that! So long, gotta get back to the heart of the heartland!!";
 		dialogue[4] = "Phoenix: ...she ran away fast. She mentioned something about, I guess, edgeworthOffice? Would that be my next lead?";
 	}
@@ -57,6 +53,7 @@ public class Room6 {
 	
 	@Command(command="give camera")
 	public String giveCamera(MazeMaker maze) {
+		if(!maze.findItem("camera")) return "Phoenix: I don't even have your camera...";
 		maze.items.remove("camera");
 		if(dialogueCount >= dialogue.length) {
 			if(!maze.findItem("camera")) return "Phoenix: (I already gave her the camera...)";

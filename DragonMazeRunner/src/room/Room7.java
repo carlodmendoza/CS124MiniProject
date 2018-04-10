@@ -1,16 +1,13 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import anno.Command;
-import anno.Direction;
 import maze.MazeMaker;
+import anno.*;
+import java.io.*;
 
 public class Room7 {
 	@Direction(command="forestLake")
 	private Room6 room6;
-	@Direction(command="")
+	@Direction(command="evidenceRoom")
 	private Room8 room8;
 
 	private String[] dialogue;
