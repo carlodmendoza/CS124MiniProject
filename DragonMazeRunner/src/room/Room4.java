@@ -11,8 +11,8 @@ import maze.MazeMaker;
 public class Room4 {
 	@Direction(command="policeStation")
 	private Room3 room3;
-	@Direction(command="parkingGarage")
-	private Room4 room4;
+	@Direction(command="sideRoom")
+	private Room5 room5;
 	private Scanner sc;
 	private String dialogue;
 	public boolean isDialogueFinished;
