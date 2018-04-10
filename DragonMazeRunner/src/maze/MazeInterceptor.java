@@ -11,8 +11,8 @@ public class MazeInterceptor {
 	public static String enterMessage(MazeMaker maze) {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
-    	if (maze.findItem("screwdriver") && maze.findItem("bloodstainedBlouse")) pw.println("Welcome to the District Court!\n");
-    	else if (maze.findItem("evidenceKey")) pw.println("Welcome to the Evidence Room!\n");
+    	if (maze.findItem("evidenceKey")) pw.println("Welcome to the Evidence Room!\n");
+    	else if (maze.findItem("screwdriver") && maze.findItem("bloodstainedBlouse")) pw.println("Welcome to the District Court!\n");
 		return sw.toString();
 	}
 	

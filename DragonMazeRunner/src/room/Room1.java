@@ -6,7 +6,7 @@ import java.io.*;
 
 public class Room1 {
 	@Direction(command="grossbergOffice")
-	private Room10 room2;
+	private Room2 room2;
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;

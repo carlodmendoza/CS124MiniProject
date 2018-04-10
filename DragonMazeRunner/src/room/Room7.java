@@ -47,7 +47,7 @@ public class Room7 {
 	
 	@Command(command="take evidenceKey")
 	public String takeButton(MazeMaker maze) {
-		if(maze.findItem("button")) return "Phoenix: (I already took the key...)";
+		if(maze.findItem("evidenceKey")) return "Phoenix: (I already took the key...)";
 		maze.items.put("evidenceKey", "Key to the police station evidence room."); 
 		return "Phoenix: Sorry, Edgeworth. Looks like I\'ll be borrowing this.";
 	}

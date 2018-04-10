@@ -22,7 +22,7 @@ public class Room6 {
 		dialogue[1] = "Phoenix: Hi, Lotta...Hart. Look, I didn\'t steal your camera, I was just told to give it to you.";
 		dialogue[2] = "Lotta: Give it to me!! My baby...";
 		dialogue[3] = "Lotta: Thanks y\'all. I was just gonna get ready to go over to that red guy\'s office with my camera--wait! Forget I said that! So long, gotta get back to the heart of the heartland!!";
-		dialogue[4] = "Phoenix: ...she ran away fast. She mentioned something about, I guess, Edgeworth's Office? Would that be my next lead?";
+		dialogue[4] = "Phoenix: ...she ran away fast. She mentioned something about an office...";
 	}
 	
 	public String getDescription(MazeMaker maze) {

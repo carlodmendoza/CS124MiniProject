@@ -1,21 +1,16 @@
 package room;
 
-
 import maze.CheckEnter;
 import maze.MazeMaker;
 import java.io.*;
 import anno.*;
 
-
 @CheckEnter
 public class Room8 {
 	@Direction(command="edgeworthOffice")
 	private Room7 room7;
-	@Direction(command="303")
+	@Direction(command="room303")
 	private Room9 room9;
-	
-	private boolean usedButton, sprayedButtonWithLuminol;
-	
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
@@ -39,7 +34,8 @@ public class Room8 {
 	public String getDescription(MazeMaker maze) {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 3, 11:00 AM - Evidence Room");
+    	maze.items.remove("evidenceKey");
+    	pw.println("August 3, 11:00 AM - Police Station -- Evidence Room");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
     	
     	return sw.toString();
@@ -55,11 +51,10 @@ public class Room8 {
 	
 	@Command(command="use button")
 	public String useButton(MazeMaker maze) {
-		if(!maze.findItem("button")) return "Phoenix: (What button?)";
-		if (usedButton) return "Phoenix: (There's no time to waste, I should use luminol on the button.)";
-		if (sprayedButtonWithLuminol) return "Phoenix: (There's no time to waste, I should go to the murderer's hotel room. It's Room 303, Gatewater Hotel.)";
+		if (maze.findItem("bloodyButton")) return "Phoenix: (There's no time to waste, I should go to the murderer's hotel room. It's Room 303, Gatewater Hotel.)";
+		if (maze.usedButton) return "Phoenix: (There's no time to waste, I should use luminol on the button.)";
 		else {
-			usedButton = true;
+			maze.usedButton = true;
 			return "Phoenix: Just as I thought... it matches Ms. May\'s blouse buttons. If it was at the crime scene, though... Ah! I see!\n" +
 				"The gap in the blood stain is heart-shaped. It\'s too good to be a coincidence, but maybe I should check that button with Luminol.";
 		}
@@ -67,15 +62,13 @@ public class Room8 {
 	
 	@Command(command="use luminol")
 	public String useLuminol(MazeMaker maze) {
-		if (usedButton) {
-			if(sprayedButtonWithLuminol) {
+		if (maze.usedButton) {
+			if(maze.findItem("bloodyButton")) {
 				return "Phoenix: (I've already sprayed the button with luminol.)";
 			} else {
-				if(!maze.findItem("luminol")) return "Phoenix: (What's luminol?)";
 				if(!maze.findItem("button")) return "Phoenix: (What am I supposed to spray this at??)";
 				if(!maze.findItem("button") && !maze.findItem("luminol")) return "Phoenix: (What..?)";
 				
-				sprayedButtonWithLuminol = true;
 				maze.items.remove("button");
 				maze.items.put("bloodyButton", "Pink, heart-shaped, and was drenched in blood.");
 				return "Phoenix: The button has turned a ghastly blue. There\'s no mistaking it. This buttton and its perky owner was at the crime scene. Sorry, Ms. May, but it looks like I\'ll have to visit your room.";

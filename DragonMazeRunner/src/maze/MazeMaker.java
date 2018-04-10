@@ -13,7 +13,7 @@ public class MazeMaker {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
-	public boolean isInRoom10, isInRoom8, talkedToGrossberg, checkedCar, gaveCamera;
+	public boolean isInRoom10, isInRoom8, talkedToGrossberg, checkedCar, gaveCamera, usedButton, usedBloodyButton, checkedDrawer;
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
@@ -39,7 +39,7 @@ public class MazeMaker {
 			}
 		}
 		
-		currentRoom = roomMap.get(room.Room1.class);
+		currentRoom = roomMap.get(room.Room7.class);
 		
 		return printDescription(false);
 	}
@@ -97,7 +97,7 @@ public class MazeMaker {
 							Object o  = roomMap.get(fieldClass);
 							if (o instanceof EnterCondition) {
 								if(((EnterCondition) o).canEnter(this)) {
-									pw.println(((EnterCondition) o).enterMessage(this));
+									pw.print(((EnterCondition) o).enterMessage(this));
 									currentRoom = o;
 									pw.print(printDescription(true));
 									if (currentRoom.getClass().getSuperclass().getSimpleName().equals("Room10")) isInRoom10 = true;
@@ -210,8 +210,13 @@ public class MazeMaker {
 		
     	pw.println("Available commands:");
     	
-    	if (!isInRoom10) {
-	    	for (String item : items.keySet()) {
+    	if (isInRoom10) {
+    		for (String item : items.keySet()) {
+	    		pw.println(++count + ". present " + item);
+	    	}
+    	}
+    	else {
+    		for (String item : items.keySet()) {
 	    		pw.println(++count + ". use " + item);
 	    	}
 	    	
@@ -219,7 +224,6 @@ public class MazeMaker {
 			   Direction anno = f.getAnnotation(Direction.class);
 			   if (anno != null) pw.println(++count + ". goto " + anno.command());
 			}
-			
 			for (Method m : clazz.getDeclaredMethods()) {
 			   Command anno = m.getAnnotation(Command.class);
 			   if (anno != null) {
@@ -229,11 +233,7 @@ public class MazeMaker {
 				   pw.println(++count + ". " + anno.command());
 			   }
 			}
-    	}
-    	else {
-    		for (String item : items.keySet()) {
-	    		pw.println(++count + ". present " + item);
-	    	}	
+    			
     	}
 		
 		return sw.toString();
