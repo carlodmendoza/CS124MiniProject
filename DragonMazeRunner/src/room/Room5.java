@@ -28,7 +28,7 @@ public class Room5 {
 		dialogue[7] = "Will: Oh, well, about that... I-I\'m Will Powers. I used to be an actor for a children\'s show, the Steel Samurai, but I got fired a few days ago. I lost my house too, so I\'m here, a friend hooked me up with this old unused room to live in for a bit.";
 		dialogue[8] = "Phoenix: I-I see, sorry for your loss. (Is that how cutthroat the entertainment industry is these days!?) Anyway, I guess I\'ll be on my way...";
 		dialogue[9] = "Will: Wait! I forgot! Could you give these items to Mr. Detective if you meet him? You\'re those law people so you\'re friends, right? The day after the murder, I saw a pink button and a camera bag lying around in the parking lot. I didn\'t want them to get lost, so I took them. Well, you can take button or take camera now.";
-		dialogue[10] = "Phoenix: Uhh, sure?\n(These could be my big leads!)";
+		dialogue[10] = "Phoenix: Uhh, sure? (These could be my big leads!)";
 	}
 	
 	public String getDescription(MazeMaker maze) {

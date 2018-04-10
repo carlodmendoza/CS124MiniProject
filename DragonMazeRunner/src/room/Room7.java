@@ -19,7 +19,7 @@ public class Room7 {
 		dialogueCount = 0;
 		isDialogueFinished = false;
 		dialogue[0] = "Phoenix: Oh, looks like Edgeworth isn\'t here. I wanted to see him today. I guess I can check back later--wait, I wonder what\'s that on his desk?";
-		dialogue[1] = "It looks like there\'s some sort of key on his desk. It\'s labelled \"Evidence Room (evidenceKey).\"";
+		dialogue[1] = "It looks like there\'s some sort of key on his desk. It\'s labelled \"Evidence Room.\"";
 	}
 	
 	public String getDialogue() {
@@ -49,6 +49,6 @@ public class Room7 {
 	public String takeButton(MazeMaker maze) {
 		if(maze.findItem("button")) return "Phoenix: (I already took the key...)";
 		maze.items.put("evidenceKey", "Key to the police station evidence room."); 
-		return "Phoenix: Sorry, Edgeworth. Looks like I\'ll be borrowing this. (Looks like I can now goto evidenceRoom.)";
+		return "Phoenix: Sorry, Edgeworth. Looks like I\'ll be borrowing this.";
 	}
 }
