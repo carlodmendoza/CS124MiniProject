@@ -11,6 +11,7 @@ public class Room4 {
 	private Room5 room5;
 	private String[] dialogue;
 	private int dialogueCount;
+	private boolean usedLuminol;
 	public boolean isDialogueFinished;
 	
 	public Room4() {
@@ -60,8 +61,8 @@ public class Room4 {
 	public String useLuminol(MazeMaker maze) {
     	if (!maze.checkedCar) return "Phoenix: (What am I supposed to spray luminol at?)";
     	else {
-    		if (!maze.usedLuminol) {
-    			maze.usedLuminol = true;
+    		if (!usedLuminol) {
+    			usedLuminol = true;
     			return "Phoenix: Just as I thought... the entire area\'s reacted blue. There\'s pretty much blood everywhere except--huh!? Why is there a "
     				+ "gap in the blood pool? It seems to be heart-shaped. I should better take note of that.";
     		}

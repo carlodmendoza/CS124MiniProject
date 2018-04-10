@@ -55,6 +55,7 @@ public class Room6 {
 	public String giveCamera(MazeMaker maze) {
 		if(!maze.findItem("camera")) return "Phoenix: I don't even have your camera...";
 		maze.items.remove("camera");
+		maze.gaveCamera = true;
 		if(dialogueCount >= dialogue.length) {
 			if(!maze.findItem("camera")) return "Phoenix: (I already gave her the camera...)";
 			return getDialogue();

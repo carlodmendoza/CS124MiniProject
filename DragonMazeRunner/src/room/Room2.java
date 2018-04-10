@@ -56,7 +56,10 @@ public class Room2 {
 	
 	@Command(command="talkto grossberg")
 	public String talk(MazeMaker maze) { 
-		if(dialogueCount >= dialogue.length) return getDialogue();
+		if(dialogueCount >= dialogue.length) {
+			maze.talkedToGrossberg = true;
+			return getDialogue();
+		}
     	return dialogue[dialogueCount++];
     }
 }

@@ -13,7 +13,7 @@ public class MazeMaker {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
-	public boolean checkedCar, usedLuminol;
+	public boolean talkedToGrossberg, checkedCar, gaveCamera;
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
