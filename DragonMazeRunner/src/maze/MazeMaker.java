@@ -13,6 +13,7 @@ public class MazeMaker {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
+	public boolean checkedCar;
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
@@ -144,7 +145,7 @@ public class MazeMaker {
 				if (m.isAnnotationPresent(Command.class)) {
 					Command c = m.getAnnotation(Command.class);
 					try {
-						if (c.command().equals(arr[1])) {
+						if (c.command().equals(action)) {
 							pw.println(m.invoke(currentRoom, this));
 							break;
 						}
@@ -154,15 +155,6 @@ public class MazeMaker {
 				}
 			}
 			if (sw.toString().equals("")) pw.println("Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!').");
-		}
-		
-		else if (arr[0].equals("desc")) {
-			if (items.isEmpty()) {
-				pw.println("Phoenix: (I don't have any items yet.)");
-				return sw.toString();
-			}
-			if (findItem(arr[1])) pw.println(items.get(arr[1]));
-			else pw.println("Phoenix: (I don't have that item.)");
 		}
 
 		else {
@@ -195,7 +187,6 @@ public class MazeMaker {
     	
     	for (String item : items.keySet()) {
     		pw.println(++count + ". use " + item);
-    		pw.println(++count + ". desc " + item);
     	}
     	
 		for (Field f : clazz.getDeclaredFields()) {
@@ -205,7 +196,12 @@ public class MazeMaker {
 		
 		for (Method m : clazz.getDeclaredMethods()) {
 		   Command anno = m.getAnnotation(Command.class);
-		   if (anno != null) pw.println(++count + ". " + anno.command());
+		   if (anno != null) {
+			   if (anno.command().split(" ")[0].equals("use")) {
+				   continue;
+			   }
+			   pw.println(++count + ". " + anno.command());
+		   }
 		}
 		
 		return sw.toString();
@@ -218,7 +214,7 @@ public class MazeMaker {
    
     	pw.println("Court Record:");
 		for (String item: items.keySet()) {
-			pw.println(++count + ". " + item);
+			pw.println(++count + ". " + item + ": " + items.get(item));
 		}
 		
 		if (items.isEmpty()) pw.println("The court record is empty.");
