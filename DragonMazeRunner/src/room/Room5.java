@@ -1,12 +1,8 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Scanner;
-
-import anno.Command;
-import anno.Direction;
 import maze.MazeMaker;
+import anno.*;
+import java.io.*;
 
 public class Room5 {
 	@Direction(command="parkingGarage")
@@ -25,7 +21,6 @@ public class Room5 {
 		dialogue[0] = "Phoenix: I expected some sort of janitor\'s closet or security office but this looks more like a... dressing room?";
 		dialogue[1] = "???: HEY!!";
 		dialogue[2] = "Phoenix: Yikes!";
-		// Will appears
 		dialogue[3] = "???: Are you lost? Ha ha ha! Nobody usually visits me here.";
 		dialogue[4] = "Phoenix: I, err, I\'m s-sorry for bothering y-you...";
 		dialogue[5] = "???: No, it\'s okay. Umm, I think I should be saying sorry because, I know you\'re here to ask me about the murder? Well, I was away that night so I can\'t help you. Sorry...";
@@ -76,6 +71,4 @@ public class Room5 {
 		maze.items.put("camera", "A camera bag containing a high-tech DSLR. There are green fibers and red strands of hair in various parts of the bag."); 
 		return "Phoenix: This camera bag... I\'ve got a bad feeling about this... I think I know who owns this... Maybe I should pay the forestLake a visit.";
 	}
-	
-	
 }

@@ -13,7 +13,7 @@ public class MazeMaker {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
-	public boolean checkedCar;
+	public boolean checkedCar, usedLuminol;
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
@@ -111,7 +111,7 @@ public class MazeMaker {
 				}
 			}
 			try {
-				if (sw.toString().equals("")) pw.println("Where is " + arr[1] + "?");
+				if (sw.toString().equals("")) pw.println("Where is the " + arr[1] + "?");
 			} catch (ArrayIndexOutOfBoundsException e) {
 				pw.println("Go to where?");
 			}
@@ -140,6 +140,14 @@ public class MazeMaker {
 				pw.println("Phoenix: (I don't have any items yet.)");
 				return sw.toString();
 			}
+			try {
+				if (!findItem(arr[1])) {
+					pw.println("Phoenix: (What " + arr[1] +"?)");
+					return sw.toString();
+				}
+			} catch (Exception e1) {
+				pw.println("Use what?");
+			}
 			Method[] methods = clazz.getDeclaredMethods();
 			for (Method m : methods) {
 				if (m.isAnnotationPresent(Command.class)) {
@@ -154,7 +162,7 @@ public class MazeMaker {
 					}
 				}
 			}
-			if (sw.toString().equals("")) pw.println("Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!').");
+			if (sw.toString().equals("")) pw.println("Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')");
 		}
 
 		else {

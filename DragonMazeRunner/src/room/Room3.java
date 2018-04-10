@@ -2,9 +2,7 @@ package room;
 
 import maze.MazeMaker;
 import anno.*;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 
 public class Room3 {
 	@Direction(command="grossbergOffice")

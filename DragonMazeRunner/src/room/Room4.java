@@ -1,27 +1,24 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Scanner;
-
-import anno.Command;
-import anno.Direction;
 import maze.MazeMaker;
+import anno.*;
+import java.io.*;
 
 public class Room4 {
 	@Direction(command="policeStation")
 	private Room3 room3;
 	@Direction(command="sideRoom")
 	private Room5 room5;
-	private Scanner sc;
-	private String dialogue;
+	private String[] dialogue;
+	private int dialogueCount;
 	public boolean isDialogueFinished;
 	
 	public Room4() {
-		dialogue = "Phoenix: Okay, so I\'m here. A man was murdered here, his body haphazardly stuffed into an abandoned car. *shivers*\n"
-				+ "I guess I should take look around.\n";
-		
-		sc = new Scanner(dialogue);
+		dialogue = new String[2];
+		dialogueCount = 0;
+		isDialogueFinished = false;
+		dialogue[0] = "Phoenix: Okay, so I\'m here. A man was murdered here, his body haphazardly stuffed into an abandoned car. *shivers*";
+		dialogue[1] = "I guess I should take look around.";
 	}
 	
 	public String getDescription(MazeMaker maze) {
@@ -33,16 +30,16 @@ public class Room4 {
     	return sw.toString();
 	}
 	
-	public String getDialogue() {	
-		if (isDialogueFinished)
-			return "Please enter a valid command.";
-		
-		if (!sc.hasNext()) {
+	public String getDialogue() {
+		if (dialogueCount >= dialogue.length) {
 			isDialogueFinished = true;
-			return "-- End of text --\n\nNow enter a valid command.";
+			return "-- End of text --\n\nPlease enter a valid command.";
 		}
+		return dialogue[dialogueCount++];
+	}
 	
-		return sc.nextLine();
+	public boolean getDialogueStatus() {
+		return isDialogueFinished;
 	}
 	
 	public String getRoomImg() {
@@ -51,29 +48,24 @@ public class Room4 {
 	
 	@Command(command="check car")
 	public String checkCar(MazeMaker maze) {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-		if (maze.checkedCar) pw.print("Phoenix: (I already checked the car...)");
+		if (maze.checkedCar) return "Phoenix: (I already checked the car...)";
 		else {
-			pw.println("Phoenix: This red-hot car was where the Bellboy\'s body was discovered. The car has been abandoned for quite a while here, so the owner\'s apparently "
-				+ "not involved in this case. The trunk has been forced open. It might be worth checking this area for bloodstains.");
 			maze.checkedCar = true;
+			return "Phoenix: This red-hot car was where the Bellboy\'s body was discovered. The car has been abandoned for quite a while here, so the owner\'s apparently "
+				+ "not involved in this case. The trunk has been forced open. It might be worth checking this area for bloodstains.";
 		}
-    	return sw.toString();
     }
 	
 	@Command(command="use luminol")
 	public String useLuminol(MazeMaker maze) {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-		if (!maze.findItem("luminol")) pw.print("Phoenix: (I already checked the car...)");
-		else {
-			pw.println("Phoenix: Just as I thought... the entire area\'s reacted blue. There\'s pretty much blood everywhere except--huh!? Why is there a gap in the blood pool? "
-					+ "It seems to be heart-shaped. I should better take note of that.");
-			maze.checkedCar = true;
-		}
-    	return sw.toString();
-    }
-	
-	
+    	if (!maze.checkedCar) return "Phoenix: (What am I supposed to spray luminol at?)";
+    	else {
+    		if (!maze.usedLuminol) {
+    			maze.usedLuminol = true;
+    			return "Phoenix: Just as I thought... the entire area\'s reacted blue. There\'s pretty much blood everywhere except--huh!? Why is there a "
+    				+ "gap in the blood pool? It seems to be heart-shaped. I should better take note of that.";
+    		}
+    		else return "Phoenix: (I've already sprayed this area. I don't wanna waste my luminol.)";
+    	}
+    }	
 }
