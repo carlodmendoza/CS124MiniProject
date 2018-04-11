@@ -63,6 +63,7 @@ public class Room4 {
     	else {
     		if (!usedLuminol) {
     			usedLuminol = true;
+    			maze.items.put("bloodstainedPhoto","Photo of the luminol reaction found in the Parking Area. Shows a suspicious heart-shaped gap in the blood stain.");
     			return "Phoenix: Just as I thought... the entire area\'s reacted blue. There\'s pretty much blood everywhere except--huh!? Why is there a "
     				+ "gap in the blood pool? It seems to be heart-shaped. I should better take note of that.";
     		}

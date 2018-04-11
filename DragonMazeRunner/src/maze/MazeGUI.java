@@ -53,6 +53,14 @@ public class MazeGUI {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
+						if (maze.gameOver) {
+							try {
+								Thread.sleep(1500);
+								System.exit(0);
+							} catch (InterruptedException ie) {
+								Thread.currentThread().interrupt();
+							}
+						}
 						print(maze.move(txtCommand.getText()));
 						if (maze.isInRoom10 || maze.isInRoom8) imageArea.changeImg(maze.getRoomImg(true));
 						else imageArea.changeImg(maze.getRoomImg(false));
@@ -98,6 +106,14 @@ public class MazeGUI {
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
+					if (maze.gameOver) {
+						try {
+							Thread.sleep(1500);
+							System.exit(0);
+						} catch (InterruptedException ie) {
+							Thread.currentThread().interrupt();
+						}
+					}
 					print(maze.move(txtCommand.getText()));
 					if (maze.isInRoom10 || maze.isInRoom8) imageArea.changeImg(maze.getRoomImg(true));
 					else imageArea.changeImg(maze.getRoomImg(false));
