@@ -13,7 +13,7 @@ public class MazeMaker {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
-	public boolean isInRoom10, isInRoom8, talkedToGrossberg, checkedCar, gaveCamera, usedButton, usedBloodyButton, checkedDrawer, gameOver;
+	public boolean isInRoom10, isInRoom8, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
@@ -234,13 +234,39 @@ public class MazeMaker {
 			for (Method m : clazz.getDeclaredMethods()) {
 			   Command anno = m.getAnnotation(Command.class);
 			   if (anno != null) {
+				   if (anno.command().equals("talkto grossberg")) {
+					   if (talkedToGrossberg) continue;
+				   }
+				   if (anno.command().equals("take luminol")) {
+					   if (findItem("luminol")) continue;
+				   }
+				   if (anno.command().equals("check car")) {
+					   if (checkedCar) continue;
+				   }
+				   if (anno.command().equals("take button")) {
+					   if (findItem("button")) continue;
+				   }
+				   if (anno.command().equals("take camera")) {
+					   if (findItem("camera")) continue;
+				   }
+				   if (anno.command().equals("give camera")) {
+					   if (gaveCamera) continue;
+				   }
+				   if (anno.command().equals("take evidenceKey")) {
+					   if (findItem("evidenceKey")) continue;
+				   }
+				   if (anno.command().equals("check drawer")) {
+					   if (checkedDrawer) continue;
+				   }
+				   if (anno.command().equals("take screwdriver")) {
+					   if (findItem("screwdriver")) continue;
+				   } 
 				   if (anno.command().split(" ")[0].equals("use")) {
 					   continue;
 				   }
 				   pw.println(++count + ". " + anno.command());
 			   }
-			}
-    			
+			}	
     	}
 		
 		return sw.toString();

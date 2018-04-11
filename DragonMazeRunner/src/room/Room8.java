@@ -14,6 +14,7 @@ public class Room8 {
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
+	private boolean usedButton;
 	
 	public Room8() {
 		dialogue = new String[3];
@@ -52,9 +53,9 @@ public class Room8 {
 	@Command(command="use button")
 	public String useButton(MazeMaker maze) {
 		if (maze.findItem("bloodyButton")) return "Phoenix: (There's no time to waste, I should go to the murderer's hotel room. It's Room 303, Gatewater Hotel.)";
-		if (maze.usedButton) return "Phoenix: (There's no time to waste, I should use luminol on the button.)";
+		if (usedButton) return "Phoenix: (There's no time to waste, I should use luminol on the button.)";
 		else {
-			maze.usedButton = true;
+			usedButton = true;
 			return "Phoenix: Just as I thought... it matches Ms. May\'s blouse buttons. If it was at the crime scene, though... Ah! I see!\n" +
 				"The gap in the blood stain is heart-shaped. It\'s too good to be a coincidence, but maybe I should check that button with Luminol.";
 		}
@@ -62,7 +63,7 @@ public class Room8 {
 	
 	@Command(command="use luminol")
 	public String useLuminol(MazeMaker maze) {
-		if (maze.usedButton) {
+		if (usedButton) {
 			if(maze.findItem("bloodyButton")) {
 				return "Phoenix: (I've already sprayed the button with luminol.)";
 			} else {

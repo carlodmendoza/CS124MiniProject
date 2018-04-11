@@ -16,6 +16,7 @@ public class Room9 {
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
+	private boolean usedBloodyButton;
 	
 	public Room9() {
 		dialogue = new String[1];
@@ -50,9 +51,9 @@ public class Room9 {
 	
 	@Command(command="use bloodyButton")
 	public String useButton(MazeMaker maze) {
-		if (!maze.findItem("bloodyButton") && maze.usedBloodyButton) return "Phoenix: (I've already established that the button belongs to the blouse. What other leads are there..?)";
+		if (!maze.findItem("bloodyButton") && usedBloodyButton) return "Phoenix: (I've already established that the button belongs to the blouse. What other leads are there..?)";
 		else {
-			maze.usedBloodyButton = true;
+			usedBloodyButton = true;
 			maze.items.remove("bloodyButton");
 			maze.items.put("bloodstainedBlouse", "Pink blouse with a missing button and some bloodstains. Thought to belong to April May.");
 			return "Phoenix: The clothes drawer-- aha! A pink blouse with a button missing and a dried red stain! This is all the evidence I need to pin the blame on her.";
@@ -61,6 +62,7 @@ public class Room9 {
 	
 	@Command(command="check drawer")
 	public String checkDrawer(MazeMaker maze) {
+		if (maze.findItem("screwdriver")) return "The drawer is already empty.";
 		if (maze.checkedDrawer) return "Phoenix: (Take the screwdriver, Phoenix!)";
 		else {
 			maze.checkedDrawer = true;
