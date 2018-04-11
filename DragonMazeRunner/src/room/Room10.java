@@ -47,7 +47,7 @@ public class Room10 {
 	}
 	
 	public String getRoomImg() {
-		return "10-judge.png";
+		return "10.png";
 	}
 	
 	@Command(command="present luminol")
