@@ -61,7 +61,7 @@ public class Room5 {
 	@Command(command="take button")
 	public String takeButton(MazeMaker maze) {
 		if(maze.findItem("button")) return "Phoenix: (I already took the button...)";
-		maze.items.put("button", "Pink and heart-shaped. It doesn\\'t seem remarkable, but..."); 
+		maze.items.put("button", "Pink and heart-shaped. It doesn\'t seem remarkable, but..."); 
 		return "Phoenix: This button is pink and heart-shaped. It doesn\'t seem remarkable, but...";
 	}
 	
