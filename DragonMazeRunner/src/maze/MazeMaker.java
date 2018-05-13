@@ -16,8 +16,6 @@ public class MazeMaker {
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
 
 	public String load() throws Exception {
-		items.put("bloodstainedBlouse", "value");
-		items.put("screwdriver", "value");
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -41,7 +39,7 @@ public class MazeMaker {
 			}
 		}
 		
-		currentRoom = roomMap.get(room.Room9.class);
+		currentRoom = roomMap.get(room.Room1.class);
 		return printDescription(false);
 	}
 	
