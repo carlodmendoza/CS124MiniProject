@@ -9,7 +9,6 @@ public class Room6 {
 	private Room5 room5;
 	@Direction(command="edgeworthOffice")
 	private Room7 room7;
-
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
@@ -25,12 +24,11 @@ public class Room6 {
 		dialogue[4] = "Phoenix: ...she ran away fast. She mentioned something about an office...";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 10:20 AM - Gourd Lake Forest");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
     	return sw.toString();
 	}
 	
@@ -51,6 +49,16 @@ public class Room6 {
 		else return "6.png";
 	}
 	
+	@Command(command="take")
+	public String take(MazeMaker maze, String item) {
+		return "Phoenix: (What " + item +"?)";
+	}
+	
+	@Command(command="use")
+	public String use(MazeMaker maze, String item) {
+		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
+	}
+	
 	@Command(command="give camera")
 	public String giveCamera(MazeMaker maze) {
 		if(!maze.findItem("camera") && !maze.gaveCamera) return "Phoenix: I don't even have your camera...";
@@ -62,14 +70,4 @@ public class Room6 {
 		}
     	return dialogue[dialogueCount++];
     }
-	
-	@Command(command="take")
-	public String take(MazeMaker maze, String item) {
-		return "Phoenix: (What " + item +"?)";
-	}
-	
-	@Command(command="use")
-	public String use(MazeMaker maze, String item) {
-		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
-	}
 }

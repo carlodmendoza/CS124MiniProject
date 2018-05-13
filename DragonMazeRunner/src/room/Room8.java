@@ -20,27 +20,24 @@ public class Room8 {
 		dialogue = new String[4];
 		dialogueCount = 0;
 		isDialogueFinished = false;
-
 		dialogue[0] = "Phoenix: (I have this weird feeling that the key I just used... vanished!)";
 		dialogue[1] = "Phoenix: There\'s quite a lot of documents here. There seems to be a stack related to the current case. Let\'s have a look.";
 		dialogue[2] = "Profile: April May (F, 23)\nHeight: 157cm.\nAn employee of Bluecorp.\nRelation to case: was in Gatewater Hotel, occupant of Room 303.";
 		dialogue[3] = "Phoenix: S-she\'s kinda cute... I like her pink blouse with heart-shaped buttons... wait.\nI feel like I\'ve seen a button like that before. Could it be..?";
 	}
 	
+	public String getDescription() {
+		StringWriter sw = new StringWriter();
+    	PrintWriter pw = new PrintWriter(sw);
+    	pw.println("August 3, 11:00 AM - Police Station -- Evidence Room");
+    	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
+    	return sw.toString();
+	}
+	
 	public String getDialogue() {
 		if (dialogueCount >= dialogue.length) isDialogueFinished = true;
 		if (isDialogueFinished) return "-- End of text --\n\nPlease enter a valid command.";
 		else return dialogue[dialogueCount++];
-	}
-	
-	public String getDescription(MazeMaker maze) {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	maze.items.remove("evidenceKey");
-    	pw.println("August 3, 11:00 AM - Police Station -- Evidence Room");
-    	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
-    	return sw.toString();
 	}
 	
 	public boolean getDialogueStatus() {
@@ -75,7 +72,8 @@ public class Room8 {
 				
 				maze.items.remove("button");
 				maze.items.put("bloodyButton", "Pink, heart-shaped, and was drenched in blood.");
-				return "Phoenix: The button has turned a ghastly blue. There\'s no mistaking it. This buttton and its perky owner was at the crime scene. Sorry, Ms. May, but it looks like I\'ll have to visit your room.";
+				return "Phoenix: The button has turned a ghastly blue. There\'s no mistaking it. This buttton and its perky owner was at the crime scene. "
+						+ "Sorry, Ms. May, but it looks like I\'ll have to visit your room.";
 			}
 		}
 		else return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";

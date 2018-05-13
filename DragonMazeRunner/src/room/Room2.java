@@ -28,7 +28,7 @@ public class Room2 {
 		dialogue[6] = "Grossberg: *groan* (My hemorrhoids are beginning to act up...) Hmph, make haste, my boy!";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:04 AM - Grossberg Law Offices");

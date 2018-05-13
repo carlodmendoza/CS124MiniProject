@@ -30,7 +30,7 @@ public class Room3 {
 		dialogue[6] = "To think that a murder occured in the police station\'s parking lot...";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:25 AM - Police Station");

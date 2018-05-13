@@ -16,6 +16,8 @@ public class MazeMaker {
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
 
 	public String load() throws Exception {
+		items.put("bloodstainedBlouse", "value");
+		items.put("screwdriver", "value");
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -39,24 +41,21 @@ public class MazeMaker {
 			}
 		}
 		
-		currentRoom = roomMap.get(room.Room1.class);
-		
+		currentRoom = roomMap.get(room.Room9.class);
 		return printDescription(false);
 	}
 	
 	public String printDescription(boolean isProxy) throws Exception {
 		Method m;
-		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDescription", MazeMaker.class);
-		else m = currentRoom.getClass().getDeclaredMethod("getDescription", MazeMaker.class);
-		
-		return (String) m.invoke(currentRoom, this);
+		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDescription");
+		else m = currentRoom.getClass().getDeclaredMethod("getDescription");
+		return (String) m.invoke(currentRoom);
 	}
 	
 	public String printDialogue(boolean isProxy) throws Exception {
 		Method m;
 		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDialogue");
 		else m = currentRoom.getClass().getDeclaredMethod("getDialogue");
-		
 		return (String) m.invoke(currentRoom);
 	}
 	
@@ -64,7 +63,6 @@ public class MazeMaker {
 		Field f;
 		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField("isDialogueFinished");
 		else f = currentRoom.getClass().getDeclaredField("isDialogueFinished");
-		
 		return f.getBoolean(currentRoom);
 	}
 	
@@ -72,7 +70,6 @@ public class MazeMaker {
 		Method m;
 		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getRoomImg");
 		else m = currentRoom.getClass().getDeclaredMethod("getRoomImg");
-		
 		return (String) m.invoke(currentRoom);
 	}
 	
@@ -80,7 +77,6 @@ public class MazeMaker {
 		Field f;
 		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField("items");
 		else f = currentRoom.getClass().getDeclaredField("items");
-		
 		return (String[]) f.get(currentRoom);
 	}
 	
@@ -89,9 +85,8 @@ public class MazeMaker {
     	PrintWriter pw = new PrintWriter(sw);
     	String arr[] = action.split(" ");
 		
-		Class clazz;
+		Class clazz = currentRoom.getClass() ;
 		if (EnterCondition.class.isAssignableFrom(currentRoom.getClass())) clazz = currentRoom.getClass().getSuperclass();
-		else clazz = currentRoom.getClass();	
 		
 		if (arr[0].equals("goto")) {
 			Field[] fields = clazz.getDeclaredFields();
@@ -105,8 +100,10 @@ public class MazeMaker {
 							Object o  = roomMap.get(fieldClass);
 							if (o instanceof EnterCondition) {
 								if(((EnterCondition) o).canEnter(this)) {
-									pw.print(((EnterCondition) o).enterMessage(this, clazz.getSimpleName()));
 									currentRoom = o;
+									String className = currentRoom.getClass().getSuperclass().getSimpleName();
+									if (className.equals("Room8")) items.remove("evidenceKey");
+									pw.print(((EnterCondition) o).enterMessage(className));
 									pw.print(printDescription(true));
 									isProxy = true;
 								}
@@ -179,6 +176,23 @@ public class MazeMaker {
 				}
 			}
 		}
+		
+		else if (arr[0].equals("present")) {
+			Method[] methods = clazz.getDeclaredMethods();
+			for (Method m : methods) {
+				if (m.isAnnotationPresent(Command.class)) {
+					Command c = m.getAnnotation(Command.class);
+					if (c.command().equals("present")) {
+						try {
+							pw.println(m.invoke(currentRoom, this, arr[1]));
+							break;
+						} catch (ArrayIndexOutOfBoundsException e) {
+							pw.println("Present what?");
+						}
+					}
+				}
+			}
+		}
 
 		else {
 			Method[] methods = clazz.getDeclaredMethods();
@@ -200,7 +214,6 @@ public class MazeMaker {
 			else pw.println(printDialogue(false));
 			
 		}
-		
 		return sw.toString();
 	}
 	
@@ -215,36 +228,25 @@ public class MazeMaker {
     	pw.println("Available commands:");
     	
     	if (clazz.getSimpleName().equals("Room10")) {
-    		for (Method m : clazz.getDeclaredMethods()) {
- 			   Command anno = m.getAnnotation(Command.class);
- 			   if (anno != null) {
- 				   if (!findItem(anno.command().split(" ")[1])) {
- 					   continue;
- 				   }
- 				   pw.println(++count + ". " + anno.command());
- 			   }
- 			}
+    		try {
+				for (String s : getItems(true)) {
+					if (!findItem(s)) continue;
+					pw.println(++count + ". present " + s);
+				}
+			} catch (Exception e) {
+				pw.print("");
+			}
     	}
     	else {
-    		
     		for (Field f : clazz.getDeclaredFields()) {
  			   Direction anno = f.getAnnotation(Direction.class);
  			   if (anno != null) pw.println(++count + ". goto " + anno.command());
  			}
     		
     		try {
-				if (isProxy) {
-					for (String s : getItems(true)) {
-						if (findItem(s)) continue;
-						pw.println(++count + ". take " + s);
-					}
-					
-				}
-				else {
-					for (String s : getItems(false)) {
-						if (findItem(s)) continue;
-						pw.println(++count + ". take " + s);
-					}
+				for (String s : getItems(false)) {
+					if (findItem(s)) continue;
+					pw.println(++count + ". take " + s);
 				}
 			} catch (Exception e) {
 				pw.print("");
@@ -257,12 +259,8 @@ public class MazeMaker {
 			for (Method m : clazz.getDeclaredMethods()) {
 			   Command anno = m.getAnnotation(Command.class);
 			   if (anno != null) {
-				   if (anno.command().split(" ")[0].equals("take")) {
-					   continue;
-				   }
-				   if (anno.command().split(" ")[0].equals("use")) {
-					   continue;
-				   }
+				   if (anno.command().equals("take")) continue;
+				   if (anno.command().equals("use")) continue;
 				   if (anno.command().equals("talkto grossberg")) {
 					   if (talkedToGrossberg) continue;
 				   }
@@ -279,7 +277,6 @@ public class MazeMaker {
 			   }
 			}	
     	}
-		
 		return sw.toString();
 	}
 	
@@ -294,7 +291,6 @@ public class MazeMaker {
 		}
 		
 		if (items.isEmpty()) pw.println("The court record is empty.");
-		
 		return sw.toString();
 	}
 	
@@ -302,7 +298,6 @@ public class MazeMaker {
 		for (String s : items.keySet()) {
 			if (s.equals(name)) return true;
 		}
-		
 		return false;
 	}
 }

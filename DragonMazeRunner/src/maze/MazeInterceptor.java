@@ -8,7 +8,7 @@ public class MazeInterceptor {
 		return false;
 	}
 	
-	public static String enterMessage(MazeMaker maze, String room) {
+	public static String enterMessage(String room) {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	if (room.equals("Room8")) {

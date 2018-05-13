@@ -33,7 +33,7 @@ public class Room5 {
 		dialogue[10] = "Phoenix: Uhh, sure? (These could be my big leads!)";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:50 AM - ???");

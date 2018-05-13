@@ -9,7 +9,6 @@ public class Room7 {
 	private Room6 room6;
 	@Direction(command="evidenceRoom")
 	private Room8 room8;
-
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
@@ -24,19 +23,18 @@ public class Room7 {
 		dialogue[1] = "It looks like there\'s some sort of key on his desk. It\'s labelled \"Evidence Room.\"";
 	}
 	
-	public String getDialogue() {
-		if (dialogueCount >= dialogue.length) isDialogueFinished = true;
-		if (isDialogueFinished) return "-- End of text --\n\nPlease enter a valid command.";
-		else return dialogue[dialogueCount++];
-	}
-	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 10:45 AM - High Prosecutor Office");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
     	return sw.toString();
+	}
+	
+	public String getDialogue() {
+		if (dialogueCount >= dialogue.length) isDialogueFinished = true;
+		if (isDialogueFinished) return "-- End of text --\n\nPlease enter a valid command.";
+		else return dialogue[dialogueCount++];
 	}
 	
 	public boolean getDialogueStatus() {
@@ -50,7 +48,7 @@ public class Room7 {
 	@Command(command="take")
 	public String take(MazeMaker maze, String item) {
 		if (item.equals("evidenceKey")) {
-			if(maze.findItem("evidenceKey")) return "Phoenix: (I already took the key...)";
+			if (maze.findItem("evidenceKey")) return "Phoenix: (I already took the key...)";
 			else {
 				maze.items.put("evidenceKey", "Key to the police station evidence room.");
 				return "Phoenix: Sorry, Edgeworth. Looks like I\'ll be borrowing this.";
@@ -61,6 +59,9 @@ public class Room7 {
 	
 	@Command(command="use")
 	public String use(MazeMaker maze, String item) {
-		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
+		if (item.equals("evidenceKey")) {
+			return "Phoenix: (I should go to the evidence room to use the evidence key.)";
+		}
+		else return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
 	}
 }

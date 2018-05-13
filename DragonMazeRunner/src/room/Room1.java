@@ -24,7 +24,7 @@ public class Room1 {
         dialogue[3] = "Maybe I can go to Chief\'s friend, Mr. Grossberg, for advice.";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:00 AM - Wright & Co. Law Offices");

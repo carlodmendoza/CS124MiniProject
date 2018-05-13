@@ -22,7 +22,7 @@ public class Room4 {
 		dialogue[1] = "I guess I should take look around.";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:32 PM - Police Station -- Parking Garage");

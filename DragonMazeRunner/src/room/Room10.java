@@ -14,6 +14,7 @@ public class Room10 {
 	public boolean isDialogueFinished;
 	private int lives;
 	private boolean presentedFirstEvidence;
+	public String[] items = new String[7];
 	
 	public Room10() {
 		dialogue = new String[3];
@@ -21,13 +22,19 @@ public class Room10 {
 		isDialogueFinished = false;
 		lives = 3;
 		presentedFirstEvidence = false;
-
+		items[0] = "luminol";
+		items[1] = "bloodstainedPhoto";
+		items[2] = "button";
+		items[3] = "camera";
+		items[4] = "bloodyButton";
+		items[5] = "bloodstainedBlouse";
+		items[6] = "screwdriver";
 		dialogue[0] = "Judge: The court is now in session for the trial of Mr. Larry Butz.";
 		dialogue[1] = "Payne: The prosecution is ready, Your Honor.";
 		dialogue[2] = "Phoenix: (I should probably present some evidence, fast!)";
 	}
 	
-	public String getDescription(MazeMaker maze) {
+	public String getDescription() {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 4, 10:00 AM - District Court -- Courtroom No. 3");
@@ -50,109 +57,42 @@ public class Room10 {
 		return "10.png";
 	}
 	
-	@Command(command="present luminol")
-	public String presentLuminol(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
-				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
+	@Command(command="present")
+	public String presentEvidence(MazeMaker maze, String item) {
+		if (item.equals("bloodstainedBlouse")) {
+			if (!presentedFirstEvidence) {
+				presentedFirstEvidence = true;
+				return "Phoenix: OBJECTION!\nI present this bloodstained blouse belonging to the witness, April May. I found a bloodstained button in the crime scene and it matches this blouse.\n\nJudge: The cross-examination hasn't even started, but I accept that. Can you present another piece of incriminating evidence?";
 			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
-		}
-		else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
-	}
-	
-	@Command(command="present bloodstainedPhoto")
-	public String presentPhoto(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
+			else { 
 				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
+				return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz... GUILTY\n\nGAME OVER -- press enter to exit...";
 			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
 		}
-		else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
-	}
-	
-	@Command(command="present button")
-	public String presentButton(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
+		else if (item.equals("screwdriver")) {
+			if (!presentedFirstEvidence) {
+				lives--;
+				if (lives < 0) {
+					maze.gameOver = true;
+					return "GAME OVER -- press enter to exit...";
+				}
+				return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
+			}
+			else {
 				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
+				return "Phoenix: Your Honor. In the witness's hotel room, I found a conspicuous screwdriver in a drawer. It looks clean, but based on the autopsy report the victim died due to multiple stab wounds. Ergo! This screwdriver was the very same murder weapon!\n\nJudge: ...Well then. I still don\'t understand what happened. But considering all the evidence presented I can now provide a verdict.\nI now pronounce the defendant, Larry Butz...\n\nNOT GUILTY\n\nYOU WON THE CASE! -- press enter to exit...";
 			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
-		}
-		else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
-	}
-	
-	@Command(command="present camera")
-	public String presentCamera(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
-				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
-			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
-		}
-		else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
-	}
-	
-	@Command(command="present evidenceKey")
-	public String presentKey(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
-				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
-			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
-		}
-		else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
-	}
-	
-	@Command(command="present bloodyButton")
-	public String presentBloodyButton(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
-				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
-			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
-		}
-		else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
-	}
-	
-	@Command(command="present bloodstainedBlouse")
-	public String presentBlouse(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			presentedFirstEvidence = true;
-			return "Phoenix: OBJECTION!\nI present this bloodstained blouse belonging to the witness, April May. I found a bloodstained button in the crime scene and it matches this blouse.\n\nJudge: The cross-examination hasn't even started, but I accept that. Can you present another piece of incriminating evidence?";
-		}
-		else { 
-			maze.gameOver = true;
-			return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz... GUILTY\n\nGAME OVER -- press enter to exit...";
-		}
-	}
-
-	@Command(command="present screwdriver")
-	public String presentScrewdriver(MazeMaker maze) {
-		if (!presentedFirstEvidence) {
-			lives--;
-			if (lives < 0) {
-				maze.gameOver = true;
-				return "GAME OVER -- press enter to exit...";
-			}
-			return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
 		}
 		else {
-			maze.gameOver = true;
-			return "Phoenix: Your Honor. In the witness's hotel room, I found a conspicuous screwdriver in a drawer. It looks clean, but based on the autopsy report the victim died due to multiple stab wounds. Ergo! This screwdriver was the very same murder weapon!\n\nJudge: ...Well then. I still don\'t understand what happened. But considering all the evidence presented I can now provide a verdict.\nI now pronounce the defendant, Larry Butz...\n\nNOT GUILTY\n\nYOU WON THE CASE! -- press enter to exit...";
+			if (!presentedFirstEvidence) {
+				lives--;
+				if (lives < 0) {
+					maze.gameOver = true;
+					return "GAME OVER -- press enter to exit...";
+				}
+				return "Phoenix: (This isn't right! Think, what's the right evidence!? I only have " + lives + " chance(s) left!)";
+			}
+			else return "Judge: Sorry, Mr. Wright, but you have made a mockery of the court. \nI now pronounce the defendant, Larry Butz...\n\nGUILTY";
 		}
 	}
 }
