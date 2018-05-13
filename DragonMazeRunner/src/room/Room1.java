@@ -29,7 +29,6 @@ public class Room1 {
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:00 AM - Wright & Co. Law Offices");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
     	return sw.toString();
 	}
 	
@@ -49,4 +48,13 @@ public class Room1 {
 		return "1.png";
 	}
 	
+	@Command(command="take")
+	public String take(MazeMaker maze, String item) {
+		return "Phoenix: (What " + item +"?)";
+	}
+	
+	@Command(command="use")
+	public String use(MazeMaker maze, String item) {
+		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
+	}
 }

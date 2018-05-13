@@ -27,7 +27,6 @@ public class Room4 {
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:32 PM - Police Station -- Parking Garage");
     	if (!isDialogueFinished) pw.println("\nPress enter to advance text.");
-    	
     	return sw.toString();
 	}
 	
@@ -47,6 +46,28 @@ public class Room4 {
 		return "4.png";
 	}
 	
+	@Command(command="take")
+	public String take(MazeMaker maze, String item) {
+		return "Phoenix: (What " + item +"?)";
+	}
+	
+	@Command(command="use")
+	public String use(MazeMaker maze, String item) {
+		if (item.equals("luminol")) {
+			if (!maze.checkedCar) return "Phoenix: (What am I supposed to spray luminol at?)";
+	    	else {
+	    		if (!usedLuminol) {
+	    			usedLuminol = true;
+	    			maze.items.put("bloodstainedPhoto","Photo of the luminol reaction found in the Parking Area. Shows a suspicious heart-shaped gap in the blood stain.");
+	    			return "Phoenix: Just as I thought... the entire area\'s reacted blue. There\'s pretty much blood everywhere except--huh!? Why is there a "
+	    				+ "gap in the blood pool? It seems to be heart-shaped. I should better take note of that.";
+	    		}
+	    		else return "Phoenix: (I've already sprayed this area. I don't wanna waste my luminol.)";
+	    	}
+		}
+		else return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
+	}
+	
 	@Command(command="check car")
 	public String checkCar(MazeMaker maze) {
 		if (maze.checkedCar) return "Phoenix: (I already checked the car...)";
@@ -56,18 +77,4 @@ public class Room4 {
 				+ "not involved in this case. The trunk has been forced open. It might be worth checking this area for bloodstains.";
 		}
     }
-	
-	@Command(command="use luminol")
-	public String useLuminol(MazeMaker maze) {
-    	if (!maze.checkedCar) return "Phoenix: (What am I supposed to spray luminol at?)";
-    	else {
-    		if (!usedLuminol) {
-    			usedLuminol = true;
-    			maze.items.put("bloodstainedPhoto","Photo of the luminol reaction found in the Parking Area. Shows a suspicious heart-shaped gap in the blood stain.");
-    			return "Phoenix: Just as I thought... the entire area\'s reacted blue. There\'s pretty much blood everywhere except--huh!? Why is there a "
-    				+ "gap in the blood pool? It seems to be heart-shaped. I should better take note of that.";
-    		}
-    		else return "Phoenix: (I've already sprayed this area. I don't wanna waste my luminol.)";
-    	}
-    }	
 }

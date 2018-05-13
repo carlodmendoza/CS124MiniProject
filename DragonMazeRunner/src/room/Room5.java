@@ -9,15 +9,17 @@ public class Room5 {
 	private Room4 room4;
 	@Direction(command="forestLake")
 	private Room6 room6;
-	
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
+	public String[] items = new String[2];
 	
 	public Room5() {
 		dialogue = new String[11];
 		dialogueCount = 0;
 		isDialogueFinished = false;
+		items[0] = "button";
+		items[1] = "camera";
 		dialogue[0] = "Phoenix: I expected some sort of janitor\'s closet or security office but this looks more like a... dressing room?";
 		dialogue[1] = "???: HEY!!";
 		dialogue[2] = "Phoenix: Yikes!";
@@ -36,7 +38,6 @@ public class Room5 {
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:50 AM - ???");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
     	return sw.toString();
 	}
 	
@@ -58,17 +59,23 @@ public class Room5 {
 		else return "5-willcute.png";
 	}
 	
-	@Command(command="take button")
-	public String takeButton(MazeMaker maze) {
-		if(maze.findItem("button")) return "Phoenix: (I already took the button...)";
-		maze.items.put("button", "Pink and heart-shaped. It doesn\'t seem remarkable, but..."); 
-		return "Phoenix: This button is pink and heart-shaped. It doesn\'t seem remarkable, but...";
-	}
+	@Command(command="take")
+	public String take(MazeMaker maze, String item) {
+		if (item.equals("button")) {
+			if(maze.findItem("button")) return "Phoenix: (I already took the button...)";
+			maze.items.put("button", "Pink and heart-shaped. It doesn\'t seem remarkable, but..."); 
+			return "Phoenix: This button is pink and heart-shaped. It doesn\'t seem remarkable, but...";
+		}
+		else if (item.equals("camera")) {
+			if(maze.findItem("camera")) return "Phoenix: (I already took the camera...)";
+			maze.items.put("camera", "A camera bag containing a high-tech DSLR. There are green fibers and red strands of hair in various parts of the bag."); 
+			return "Phoenix: This camera bag... I\'ve got a bad feeling about this... I think I know who owns this...";
+		}
+		else return "Phoenix: (What " + item +"?)";
+    }
 	
-	@Command(command="take camera")
-	public String takeCamera(MazeMaker maze) {
-		if(maze.findItem("camera")) return "Phoenix: (I already took the camera...)";
-		maze.items.put("camera", "A camera bag containing a high-tech DSLR. There are green fibers and red strands of hair in various parts of the bag."); 
-		return "Phoenix: This camera bag... I\'ve got a bad feeling about this... I think I know who owns this...";
+	@Command(command="use")
+	public String use(MazeMaker maze, String item) {
+		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
 	}
 }

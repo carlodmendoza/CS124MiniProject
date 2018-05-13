@@ -13,7 +13,7 @@ public class MazeMaker {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
-	public boolean isInRoom10, isInRoom8, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
+	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
 
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
@@ -76,6 +76,14 @@ public class MazeMaker {
 		return (String) m.invoke(currentRoom);
 	}
 	
+	public String[] getItems(boolean isProxy) throws Exception {
+		Field f;
+		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField("items");
+		else f = currentRoom.getClass().getDeclaredField("items");
+		
+		return (String[]) f.get(currentRoom);
+	}
+	
 	public String move(String action) throws Exception {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
@@ -97,11 +105,10 @@ public class MazeMaker {
 							Object o  = roomMap.get(fieldClass);
 							if (o instanceof EnterCondition) {
 								if(((EnterCondition) o).canEnter(this)) {
-									pw.print(((EnterCondition) o).enterMessage(this));
+									pw.print(((EnterCondition) o).enterMessage(this, clazz.getSimpleName()));
 									currentRoom = o;
 									pw.print(printDescription(true));
-									if (currentRoom.getClass().getSuperclass().getSimpleName().equals("Room10")) isInRoom10 = true;
-									if (currentRoom.getClass().getSuperclass().getSimpleName().equals("Room8")) isInRoom8 = true;
+									isProxy = true;
 								}
 								else {
 									pw.println(((EnterCondition) o).unableToEnterMessage());
@@ -111,8 +118,7 @@ public class MazeMaker {
 							else {
 								currentRoom = o;
 								pw.print(printDescription(false));
-								isInRoom10 = false;
-								isInRoom8 = false;
+								isProxy = false;
 							}
 							break;
 						}
@@ -122,7 +128,7 @@ public class MazeMaker {
 				}
 			}
 			try {
-				if (sw.toString().equals("")) pw.println("Where is the " + arr[1] + "?");
+				if (sw.toString().equals("")) pw.println("Phoenix: (Where is the " + arr[1] + "?)");
 			} catch (ArrayIndexOutOfBoundsException e) {
 				pw.println("Go to where?");
 			}
@@ -133,16 +139,15 @@ public class MazeMaker {
 			for (Method m : methods) {
 				if (m.isAnnotationPresent(Command.class)) {
 					Command c = m.getAnnotation(Command.class);
-					if (c.command().equals(action)) {
-						pw.println(m.invoke(currentRoom, this));
-						break;
+					if (c.command().equals("take")) {
+						try {
+							pw.println(m.invoke(currentRoom, this, arr[1]));
+							break;
+						} catch (ArrayIndexOutOfBoundsException e) {
+							pw.println("Take what?");
+						}
 					}
 				}
-			}
-			try {
-				if (sw.toString().equals("")) pw.println("What " + arr[1] + "?");
-			} catch (ArrayIndexOutOfBoundsException e) {
-				pw.println("Take what?");
 			}
 		}
 		
@@ -156,7 +161,7 @@ public class MazeMaker {
 					pw.println("Phoenix: (What " + arr[1] +"?)");
 					return sw.toString();
 				}
-			} catch (Exception e1) {
+			} catch (ArrayIndexOutOfBoundsException e) {
 				pw.println("Use what?");
 			}
 			Method[] methods = clazz.getDeclaredMethods();
@@ -164,16 +169,15 @@ public class MazeMaker {
 				if (m.isAnnotationPresent(Command.class)) {
 					Command c = m.getAnnotation(Command.class);
 					try {
-						if (c.command().equals(action)) {
-							pw.println(m.invoke(currentRoom, this));
+						if (c.command().equals("use")) {
+							pw.println(m.invoke(currentRoom, this, arr[1]));
 							break;
 						}
-					} catch (Exception e) {
+					} catch (ArrayIndexOutOfBoundsException e) {
 						pw.println("Use what?");
 					}
 				}
 			}
-			if (sw.toString().equals("")) pw.println("Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')");
 		}
 
 		else {
@@ -210,7 +214,7 @@ public class MazeMaker {
 		
     	pw.println("Available commands:");
     	
-    	if (isInRoom10) {
+    	if (clazz.getSimpleName().equals("Room10")) {
     		for (Method m : clazz.getDeclaredMethods()) {
  			   Command anno = m.getAnnotation(Command.class);
  			   if (anno != null) {
@@ -222,47 +226,54 @@ public class MazeMaker {
  			}
     	}
     	else {
+    		
+    		for (Field f : clazz.getDeclaredFields()) {
+ 			   Direction anno = f.getAnnotation(Direction.class);
+ 			   if (anno != null) pw.println(++count + ". goto " + anno.command());
+ 			}
+    		
+    		try {
+				if (isProxy) {
+					for (String s : getItems(true)) {
+						if (findItem(s)) continue;
+						pw.println(++count + ". take " + s);
+					}
+					
+				}
+				else {
+					for (String s : getItems(false)) {
+						if (findItem(s)) continue;
+						pw.println(++count + ". take " + s);
+					}
+				}
+			} catch (Exception e) {
+				pw.print("");
+			}
+    		
     		for (String item : items.keySet()) {
 	    		pw.println(++count + ". use " + item);
 	    	}
-	    	
-			for (Field f : clazz.getDeclaredFields()) {
-			   Direction anno = f.getAnnotation(Direction.class);
-			   if (anno != null) pw.println(++count + ". goto " + anno.command());
-			}
-			
+				
 			for (Method m : clazz.getDeclaredMethods()) {
 			   Command anno = m.getAnnotation(Command.class);
 			   if (anno != null) {
+				   if (anno.command().split(" ")[0].equals("take")) {
+					   continue;
+				   }
+				   if (anno.command().split(" ")[0].equals("use")) {
+					   continue;
+				   }
 				   if (anno.command().equals("talkto grossberg")) {
 					   if (talkedToGrossberg) continue;
-				   }
-				   if (anno.command().equals("take luminol")) {
-					   if (findItem("luminol")) continue;
 				   }
 				   if (anno.command().equals("check car")) {
 					   if (checkedCar) continue;
 				   }
-				   if (anno.command().equals("take button")) {
-					   if (findItem("button")) continue;
-				   }
-				   if (anno.command().equals("take camera")) {
-					   if (findItem("camera")) continue;
-				   }
 				   if (anno.command().equals("give camera")) {
 					   if (gaveCamera) continue;
 				   }
-				   if (anno.command().equals("take evidenceKey")) {
-					   if (findItem("evidenceKey")) continue;
-				   }
 				   if (anno.command().equals("check drawer")) {
 					   if (checkedDrawer) continue;
-				   }
-				   if (anno.command().equals("take screwdriver")) {
-					   if (findItem("screwdriver")) continue;
-				   } 
-				   if (anno.command().split(" ")[0].equals("use")) {
-					   continue;
 				   }
 				   pw.println(++count + ". " + anno.command());
 			   }

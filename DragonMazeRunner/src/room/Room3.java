@@ -12,11 +12,13 @@ public class Room3 {
 	private String[] dialogue;
 	private int dialogueCount;
 	public boolean isDialogueFinished;
+	public String[] items = new String[1];
 	
 	public Room3() {
 		dialogue = new String[7];
 		dialogueCount = 0;
 		isDialogueFinished = false;
+ 		items[0] = "luminol";
 		dialogue[0] = "Phoenix: (Hmmm... doesn\'t seem like a busy day in the homicide division. Guess Detective Gumshoe isn\'t here.)";
 		dialogue[1] = "Policeman: Oh, you in blue. Are you Mr. Wright? Gumshoe left you something.";
 		dialogue[2] = "Phoenix: Oh, thanks. (Let me read the note...)";
@@ -33,7 +35,6 @@ public class Room3 {
     	PrintWriter pw = new PrintWriter(sw);
     	pw.println("August 3, 09:25 AM - Police Station");
     	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
     	return sw.toString();
 	}
 	
@@ -51,13 +52,21 @@ public class Room3 {
 		return "3.png";
 	}
 	
-	@Command(command="take luminol")
-	public String takeLuminol(MazeMaker maze) {
-		maze.items.put("luminol", "Spray solution that reveals trace amounts of blood and turns them into a luminous blue."); 
-		if(dialogueCount >= dialogue.length) {
-			if(maze.findItem("luminol")) return "Phoenix: (I already took the luminol...)";
-			return getDialogue();
+	@Command(command="take")
+	public String take(MazeMaker maze, String item) {
+		if (item.equals("luminol")) {
+			maze.items.put("luminol", "Spray solution that reveals trace amounts of blood and turns them into a luminous blue."); 
+			if (dialogueCount >= dialogue.length) {
+				if (maze.findItem("luminol")) return "Phoenix: (I already took the luminol...)";
+				return getDialogue();
+			}
+	    	return dialogue[dialogueCount++];
 		}
-    	return dialogue[dialogueCount++];
+		return "Phoenix: (What " + item +"?)";
     }
+	
+	@Command(command="use")
+	public String use(MazeMaker maze, String item) {
+		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
+	}
 }

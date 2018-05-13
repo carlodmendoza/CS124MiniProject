@@ -62,7 +62,7 @@ public class MazeGUI {
 							}
 						}
 						print(maze.move(txtCommand.getText()));
-						if (maze.isInRoom10 || maze.isInRoom8) imageArea.changeImg(maze.getRoomImg(true));
+						if (maze.isProxy) imageArea.changeImg(maze.getRoomImg(true));
 						else imageArea.changeImg(maze.getRoomImg(false));
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -115,7 +115,7 @@ public class MazeGUI {
 						}
 					}
 					print(maze.move(txtCommand.getText()));
-					if (maze.isInRoom10 || maze.isInRoom8) imageArea.changeImg(maze.getRoomImg(true));
+					if (maze.isProxy) imageArea.changeImg(maze.getRoomImg(true));
 					else imageArea.changeImg(maze.getRoomImg(false));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -128,7 +128,7 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (maze.isInRoom10 || maze.isInRoom8) {
+					if (maze.isProxy) {
 						if (!maze.isDialogueFinished(true)) print("You have to finish the conversation first.\n");
 						else print(maze.showCommands());
 					}

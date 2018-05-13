@@ -8,11 +8,15 @@ public class MazeInterceptor {
 		return false;
 	}
 	
-	public static String enterMessage(MazeMaker maze) {
+	public static String enterMessage(MazeMaker maze, String room) {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
-    	if (maze.findItem("evidenceKey")) pw.println("Welcome to the Evidence Room!\n");
-    	else if (maze.findItem("screwdriver") && maze.findItem("bloodstainedBlouse")) pw.println("Welcome to the District Court!\n");
+    	if (room.equals("Room8")) {
+    		pw.println("Welcome to the Evidence Room!\n");
+		}
+		else if (room.equals("Room10")) {
+			pw.println("Welcome to the District Court!\n");
+		}
 		return sw.toString();
 	}
 	
