@@ -62,7 +62,7 @@ public class Room3 {
 			}
 	    	return dialogue[dialogueCount++];
 		}
-		return "Phoenix: (What " + item +"?)";
+		else return "Phoenix: (What " + item +"?)";
     }
 	
 	@Command(command="use")

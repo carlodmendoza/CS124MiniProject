@@ -62,4 +62,14 @@ public class Room6 {
 		}
     	return dialogue[dialogueCount++];
     }
+	
+	@Command(command="take")
+	public String take(MazeMaker maze, String item) {
+		return "Phoenix: (What " + item +"?)";
+	}
+	
+	@Command(command="use")
+	public String use(MazeMaker maze, String item) {
+		return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
+	}
 }
