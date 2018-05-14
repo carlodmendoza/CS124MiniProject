@@ -2,24 +2,18 @@ package room;
 
 import maze.MazeMaker;
 import anno.*;
-import java.io.*;
 
-public class Room5 {
+public class Room5 extends Room {
 	@Direction(command="parkingGarage")
 	private Room4 room4;
 	@Direction(command="forestLake")
 	private Room6 room6;
-	private String[] dialogue;
-	private int dialogueCount;
-	public boolean isDialogueFinished;
-	public String[] items = new String[2];
 	
 	public Room5() {
-		dialogue = new String[11];
-		dialogueCount = 0;
-		isDialogueFinished = false;
+		items = new String[2];
 		items[0] = "button";
 		items[1] = "camera";
+		dialogue = new String[11];
 		dialogue[0] = "Phoenix: I expected some sort of janitor\'s closet or security office but this looks more like a... dressing room?";
 		dialogue[1] = "???: HEY!!";
 		dialogue[2] = "Phoenix: Yikes!";
@@ -33,25 +27,8 @@ public class Room5 {
 		dialogue[10] = "Phoenix: Uhh, sure? (These could be my big leads!)";
 	}
 	
-	public String getDescription() {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 3, 09:50 AM - ???");
-    	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	return sw.toString();
-	}
-	
-	public String getDialogue() {
-		if (dialogueCount >= dialogue.length) isDialogueFinished = true;
-		if (isDialogueFinished) return "-- End of text --\n\nPlease enter a valid command.";
-		else return dialogue[dialogueCount++];
-	}
-	
-	public boolean getDialogueStatus() {
-		return isDialogueFinished;
-	}
-	
-	public String getRoomImg() {
+	@Override
+	public String getRoomImg(String room) {
 		if (dialogueCount >= 8) return "5-willcute.png";
 		if (dialogueCount >= 5) return "5-willfriendly.png";
 		if (dialogueCount >= 2) return "5-willshout.png";

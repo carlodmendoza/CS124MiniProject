@@ -16,6 +16,7 @@ public class MazeMaker {
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
 
 	public String load() throws Exception {
+		items.put("camera", "value");
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -44,16 +45,43 @@ public class MazeMaker {
 	}
 	
 	public String getMethod(boolean isProxy, String method) throws Exception {
+		Class clazz = currentRoom.getClass();
 		Method m;
-		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod(method);
-		else m = currentRoom.getClass().getDeclaredMethod(method);
-		return (String) m.invoke(currentRoom);
+		if (isProxy) {
+			if (method.equals("getDialogue")) {
+				m = clazz.getSuperclass().getSuperclass().getDeclaredMethod(method);
+				return (String) m.invoke(currentRoom);
+			}
+			else {
+				m = clazz.getSuperclass().getSuperclass().getDeclaredMethod(method, String.class);
+				return (String) m.invoke(currentRoom, clazz.getSuperclass().getSimpleName());
+			}
+		}
+		else {
+			if (method.equals("getDialogue") && (clazz.getSimpleName().equals("Room2") || clazz.getSimpleName().equals("Room3") || clazz.getSimpleName().equals("Room6") || clazz.getSimpleName().equals("Room10"))) {
+				m = clazz.getDeclaredMethod(method);
+				return (String) m.invoke(currentRoom);
+			}
+			else if (method.equals("getDialogue")) {
+				m = clazz.getSuperclass().getDeclaredMethod(method);
+				return (String) m.invoke(currentRoom);
+			}
+			else if (method.equals("getRoomImg") && (clazz.getSimpleName().equals("Room2") || clazz.getSimpleName().equals("Room5") || clazz.getSimpleName().equals("Room6"))) {
+				m = clazz.getDeclaredMethod(method, String.class);
+				return (String) m.invoke(currentRoom, clazz.getSimpleName());
+			}
+			else {
+				m = clazz.getSuperclass().getDeclaredMethod(method, String.class);
+				return (String) m.invoke(currentRoom, clazz.getSimpleName());
+			}
+			
+		}
 	}
 	
 	public Object getField(boolean isProxy, String field) throws Exception {
 		Field f;
-		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField(field);
-		else f = currentRoom.getClass().getDeclaredField(field);
+		if (isProxy) f = currentRoom.getClass().getSuperclass().getSuperclass().getDeclaredField(field);
+		else f = currentRoom.getClass().getSuperclass().getDeclaredField(field);
 		return f.get(currentRoom);
 	}
 		
@@ -171,8 +199,7 @@ public class MazeMaker {
 			if (currentRoom instanceof EnterCondition) {
 				pw.println(getMethod(true, "getDialogue"));
 			}
-			else pw.println(getMethod(false, "getDialogue"));
-			
+			else pw.println(getMethod(false, "getDialogue"));	
 		}
 		return sw.toString();
 	}

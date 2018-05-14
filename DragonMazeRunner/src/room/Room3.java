@@ -2,23 +2,17 @@ package room;
 
 import maze.MazeMaker;
 import anno.*;
-import java.io.*;
 
-public class Room3 {
+public class Room3 extends Room {
 	@Direction(command="grossbergOffice")
 	private Room2 room2;
 	@Direction(command="parkingGarage")
 	private Room4 room4;
-	private String[] dialogue;
-	private int dialogueCount;
-	public boolean isDialogueFinished;
-	public String[] items = new String[1];
 	
 	public Room3() {
+		items = new String[1];
+		items[0] = "luminol";
 		dialogue = new String[7];
-		dialogueCount = 0;
-		isDialogueFinished = false;
- 		items[0] = "luminol";
 		dialogue[0] = "Phoenix: (Hmmm... doesn\'t seem like a busy day in the homicide division. Guess Detective Gumshoe isn\'t here.)";
 		dialogue[1] = "Policeman: Oh, you in blue. Are you Mr. Wright? Gumshoe left you something.";
 		dialogue[2] = "Phoenix: Oh, thanks. (Let me read the note...)";
@@ -30,26 +24,11 @@ public class Room3 {
 		dialogue[6] = "To think that a murder occured in the police station\'s parking lot...";
 	}
 	
-	public String getDescription() {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 3, 09:25 AM - Police Station");
-    	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	return sw.toString();
-	}
-	
+	@Override
 	public String getDialogue() {
 		if (dialogueCount >= dialogue.length || dialogueCount == 2) isDialogueFinished = true;
 		if (isDialogueFinished) return "-- End of text --\n\nPlease enter a valid command.";
 		else return dialogue[dialogueCount++];
-	}
-	
-	public boolean getDialogueStatus() {
-		return isDialogueFinished;
-	}
-	
-	public String getRoomImg() {
-		return "3.png";
 	}
 	
 	@Command(command="take")

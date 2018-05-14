@@ -2,51 +2,29 @@ package room;
 
 import maze.CheckEnter;
 import maze.MazeMaker;
-import java.io.*;
 import anno.*;
 
 @CheckEnter
-public class Room10 {
+public class Room10 extends Room {
 	@Direction(command="gatewaterHotel")
 	private Room9 room9;
-	private String[] dialogue;
-	private int dialogueCount;
-	public boolean isDialogueFinished;
 	private int lives;
 	private boolean presentedFirstEvidence;
 	
 	public Room10() {
-		dialogue = new String[3];
-		dialogueCount = 0;
-		isDialogueFinished = false;
 		lives = 3;
 		presentedFirstEvidence = false;
+		dialogue = new String[3];
 		dialogue[0] = "Judge: The court is now in session for the trial of Mr. Larry Butz.";
 		dialogue[1] = "Payne: The prosecution is ready, Your Honor.";
 		dialogue[2] = "Phoenix: (I should probably present some evidence, fast!)";
 	}
-	
-	public String getDescription() {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 4, 10:00 AM - District Court -- Courtroom No. 3");
-    	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
-    	return sw.toString();
-	}
-	
+		
+	@Override
 	public String getDialogue() {
 		if (dialogueCount >= dialogue.length) isDialogueFinished = true;
 		if (isDialogueFinished) return "-- End of text --\n\nPlease use some evidence to present it to the court.";
 		else return dialogue[dialogueCount++];
-	}
-	
-	public boolean getDialogueStatus() {
-		return isDialogueFinished;
-	}
-	
-	public String getRoomImg() {
-		return "10.png";
 	}
 	
 	@Command(command="take")

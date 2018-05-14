@@ -1,54 +1,22 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import anno.Command;
-import anno.Direction;
 import maze.MazeMaker;
+import anno.*;
 
-public class Room9 {
+public class Room9 extends Room {
 	@Direction(command="edgeworthOffice")
 	private Room7 room7;
 	@Direction(command="evidenceRoom")
 	private Room8 room8;
 	@Direction(command="court")
 	private Room10 room10;
-	private String[] dialogue;
-	private int dialogueCount;
-	public boolean isDialogueFinished;
 	private boolean usedBloodyButton;
-	public String[] items = new String[1];
 	
 	public Room9() {
-		dialogue = new String[1];
-		dialogueCount = 0;
-		isDialogueFinished = false;
+		items = new String[1];
 		items[0] = "screwdriver";
+		dialogue = new String[1];
 		dialogue[0] = "Phoenix: Huh... the door was left open. Quick, I have to find where this button belongs to. That clothes dresser in the corner seems like a good place to start. Also, there seems to be an open drawer in that cabinet.";
-	}
-	
-	public String getDialogue() {
-		if (dialogueCount >= dialogue.length) isDialogueFinished = true;
-		if (isDialogueFinished) return "-- End of text --\n\nPlease enter a valid command.";
-		else return dialogue[dialogueCount++];
-	}
-	
-	public String getDescription() {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 3, 11:45 AM - Gatewater Hotel -- Room 303");
-    	if (dialogueCount < dialogue.length) pw.println("\nPress enter to advance text.");
-    	
-    	return sw.toString();
-	}
-	
-	public boolean getDialogueStatus() {
-		return isDialogueFinished;
-	}
-	
-	public String getRoomImg() {
-		return "9.png";
 	}
 	
 	@Command(command="take")

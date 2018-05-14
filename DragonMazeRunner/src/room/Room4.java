@@ -2,50 +2,20 @@ package room;
 
 import maze.MazeMaker;
 import anno.*;
-import java.io.*;
 
-public class Room4 {
+public class Room4 extends Room {
 	@Direction(command="policeStation")
 	private Room3 room3;
 	@Direction(command="sideRoom")
 	private Room5 room5;
-	private String[] dialogue;
-	private int dialogueCount;
 	private boolean usedLuminol;
-	public boolean isDialogueFinished;
 	
 	public Room4() {
 		dialogue = new String[2];
-		dialogueCount = 0;
-		isDialogueFinished = false;
 		dialogue[0] = "Phoenix: Okay, so I\'m here. A man was murdered here, his body haphazardly stuffed into an abandoned car. *shivers*";
 		dialogue[1] = "I guess I should take look around.";
 	}
-	
-	public String getDescription() {
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	pw.println("August 3, 09:32 PM - Police Station -- Parking Garage");
-    	if (!isDialogueFinished) pw.println("\nPress enter to advance text.");
-    	return sw.toString();
-	}
-	
-	public String getDialogue() {
-		if (dialogueCount >= dialogue.length) {
-			isDialogueFinished = true;
-			return "-- End of text --\n\nPlease enter a valid command.";
-		}
-		return dialogue[dialogueCount++];
-	}
-	
-	public boolean getDialogueStatus() {
-		return isDialogueFinished;
-	}
-	
-	public String getRoomImg() {
-		return "4.png";
-	}
-	
+		
 	@Command(command="take")
 	public String take(MazeMaker maze, String item) {
 		return "Phoenix: (What " + item +"?)";
