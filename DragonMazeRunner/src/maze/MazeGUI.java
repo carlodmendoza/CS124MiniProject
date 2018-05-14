@@ -62,8 +62,8 @@ public class MazeGUI {
 							}
 						}
 						print(maze.move(txtCommand.getText()));
-						if (maze.isProxy) imageArea.changeImg(maze.getRoomImg(true));
-						else imageArea.changeImg(maze.getRoomImg(false));
+						if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
+						else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
@@ -115,8 +115,8 @@ public class MazeGUI {
 						}
 					}
 					print(maze.move(txtCommand.getText()));
-					if (maze.isProxy) imageArea.changeImg(maze.getRoomImg(true));
-					else imageArea.changeImg(maze.getRoomImg(false));
+					if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
+					else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}			
@@ -129,11 +129,11 @@ public class MazeGUI {
 			public void actionPerformed(ActionEvent ae) {
 				try {
 					if (maze.isProxy) {
-						if (!maze.isDialogueFinished(true)) print("You have to finish the conversation first.\n");
+						if (!(boolean)maze.getField(true, "isDialogueFinished")) print("You have to finish the conversation first.\n");
 						else print(maze.showCommands());
 					}
 					else {
-						if (!maze.isDialogueFinished(false)) print("You have to finish the conversation first.\n");
+						if (!(boolean)maze.getField(false, "isDialogueFinished")) print("You have to finish the conversation first.\n");
 						else print(maze.showCommands());
 					}
 				} catch (Exception e) {

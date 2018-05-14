@@ -40,44 +40,23 @@ public class MazeMaker {
 		}
 		
 		currentRoom = roomMap.get(room.Room1.class);
-		return printDescription(false);
+		return getMethod(false, "getDescription");
 	}
 	
-	public String printDescription(boolean isProxy) throws Exception {
+	public String getMethod(boolean isProxy, String method) throws Exception {
 		Method m;
-		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDescription");
-		else m = currentRoom.getClass().getDeclaredMethod("getDescription");
+		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod(method);
+		else m = currentRoom.getClass().getDeclaredMethod(method);
 		return (String) m.invoke(currentRoom);
 	}
 	
-	public String printDialogue(boolean isProxy) throws Exception {
-		Method m;
-		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getDialogue");
-		else m = currentRoom.getClass().getDeclaredMethod("getDialogue");
-		return (String) m.invoke(currentRoom);
-	}
-	
-	public boolean isDialogueFinished(boolean isProxy) throws Exception {
+	public Object getField(boolean isProxy, String field) throws Exception {
 		Field f;
-		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField("isDialogueFinished");
-		else f = currentRoom.getClass().getDeclaredField("isDialogueFinished");
-		return f.getBoolean(currentRoom);
+		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField(field);
+		else f = currentRoom.getClass().getDeclaredField(field);
+		return f.get(currentRoom);
 	}
-	
-	public String getRoomImg(boolean isProxy) throws Exception {
-		Method m;
-		if (isProxy) m = currentRoom.getClass().getSuperclass().getDeclaredMethod("getRoomImg");
-		else m = currentRoom.getClass().getDeclaredMethod("getRoomImg");
-		return (String) m.invoke(currentRoom);
-	}
-	
-	public String[] getItems(boolean isProxy) throws Exception {
-		Field f;
-		if (isProxy) f = currentRoom.getClass().getSuperclass().getDeclaredField("items");
-		else f = currentRoom.getClass().getDeclaredField("items");
-		return (String[]) f.get(currentRoom);
-	}
-	
+		
 	public String move(String action) throws Exception {
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
@@ -102,17 +81,17 @@ public class MazeMaker {
 									String className = currentRoom.getClass().getSuperclass().getSimpleName();
 									if (className.equals("Room8")) items.remove("evidenceKey");
 									pw.print(((EnterCondition) o).enterMessage(className));
-									pw.print(printDescription(true));
+									pw.print(getMethod(true, "getDescription"));
 									isProxy = true;
 								}
 								else {
 									pw.println(((EnterCondition) o).unableToEnterMessage());
-									pw.print(printDescription(false));
+									pw.print(getMethod(false, "getDescription"));
 								}
 							}
 							else {
 								currentRoom = o;
-								pw.print(printDescription(false));
+								pw.print(getMethod(false, "getDescription"));
 								isProxy = false;
 							}
 							break;
@@ -174,23 +153,6 @@ public class MazeMaker {
 				}
 			}
 		}
-		
-		else if (arr[0].equals("present")) {
-			Method[] methods = clazz.getDeclaredMethods();
-			for (Method m : methods) {
-				if (m.isAnnotationPresent(Command.class)) {
-					Command c = m.getAnnotation(Command.class);
-					if (c.command().equals("present")) {
-						try {
-							pw.println(m.invoke(currentRoom, this, arr[1]));
-							break;
-						} catch (ArrayIndexOutOfBoundsException e) {
-							pw.println("Present what?");
-						}
-					}
-				}
-			}
-		}
 
 		else {
 			Method[] methods = clazz.getDeclaredMethods();
@@ -207,9 +169,9 @@ public class MazeMaker {
 			
 		if (sw.toString().equals("")) {
 			if (currentRoom instanceof EnterCondition) {
-				pw.println(printDialogue(true));
+				pw.println(getMethod(true, "getDialogue"));
 			}
-			else pw.println(printDialogue(false));
+			else pw.println(getMethod(false, "getDialogue"));
 			
 		}
 		return sw.toString();
@@ -225,56 +187,49 @@ public class MazeMaker {
 		
     	pw.println("Available commands:");
     	
-    	if (clazz.getSimpleName().equals("Room10")) {
-    		try {
-				for (String s : getItems(true)) {
-					if (!findItem(s)) continue;
-					pw.println(++count + ". present " + s);
-				}
-			} catch (Exception e) {
-				pw.print("");
-			}
-    	}
-    	else {
-    		for (Field f : clazz.getDeclaredFields()) {
- 			   Direction anno = f.getAnnotation(Direction.class);
- 			   if (anno != null) pw.println(++count + ". goto " + anno.command());
- 			}
-    		
-    		try {
-				for (String s : getItems(false)) {
-					if (findItem(s)) continue;
-					pw.println(++count + ". take " + s);
-				}
-			} catch (Exception e) {
-				pw.print("");
-			}
-    		
-    		for (String item : items.keySet()) {
-	    		pw.println(++count + ". use " + item);
-	    	}
-				
-			for (Method m : clazz.getDeclaredMethods()) {
-			   Command anno = m.getAnnotation(Command.class);
-			   if (anno != null) {
-				   if (anno.command().equals("take")) continue;
-				   if (anno.command().equals("use")) continue;
-				   if (anno.command().equals("talkto grossberg")) {
-					   if (talkedToGrossberg) continue;
-				   }
-				   if (anno.command().equals("check car")) {
-					   if (checkedCar) continue;
-				   }
-				   if (anno.command().equals("give camera")) {
-					   if (gaveCamera) continue;
-				   }
-				   if (anno.command().equals("check drawer")) {
-					   if (checkedDrawer) continue;
-				   }
-				   pw.println(++count + ". " + anno.command());
+		for (Field f : clazz.getDeclaredFields()) {
+		   Direction anno = f.getAnnotation(Direction.class);
+		   if (anno != null) {
+			   if (anno.command().equals("policeStation")) {
+				   if (!talkedToGrossberg) continue;
 			   }
-			}	
+			   pw.println(++count + ". goto " + anno.command());
+		   }
+		}
+		
+		try {
+			for (String s : (String[]) getField(false, "items")) {
+				if (findItem(s)) continue;
+				pw.println(++count + ". take " + s);
+			}
+		} catch (Exception e) {
+			pw.print("");
+		}
+		
+		for (String item : items.keySet()) {
+    		pw.println(++count + ". use " + item);
     	}
+			
+		for (Method m : clazz.getDeclaredMethods()) {
+		   Command anno = m.getAnnotation(Command.class);
+		   if (anno != null) {
+			   if (anno.command().equals("take")) continue;
+			   if (anno.command().equals("use")) continue;
+			   if (anno.command().equals("talkto grossberg")) {
+				   if (talkedToGrossberg) continue;
+			   }
+			   if (anno.command().equals("check car")) {
+				   if (checkedCar) continue;
+			   }
+			   if (anno.command().equals("give camera")) {
+				   if (gaveCamera) continue;
+			   }
+			   if (anno.command().equals("check drawer")) {
+				   if (checkedDrawer) continue;
+			   }
+			   pw.println(++count + ". " + anno.command());
+		   }
+		}	
 		return sw.toString();
 	}
 	

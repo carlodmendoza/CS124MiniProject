@@ -54,10 +54,13 @@ public class Room9 {
 	@Command(command="take")
 	public String take(MazeMaker maze, String item) {
 		if (item.equals("screwdriver")) {
-			if (maze.findItem("screwdriver")) return "Phoenix: (I've already taken the screwdriver.)";
+			if (!maze.checkedDrawer) return "What screwdriver?";
 			else {
-				maze.items.put("screwdriver", "A standard, flathead screwdriver. Found in April May\'s room.");
-				return "(Screwdriver added to Court Record.)";
+				if (maze.findItem("screwdriver")) return "Phoenix: (I've already taken the screwdriver.)";
+				else {
+					maze.items.put("screwdriver", "A standard, flathead screwdriver. Found in April May\'s room.");
+					return "(Screwdriver added to Court Record.)";
+				}
 			}
 		}
 		else return "Phoenix: (What " + item +"?)";
@@ -69,7 +72,6 @@ public class Room9 {
 			if (!maze.findItem("bloodyButton") && usedBloodyButton) return "Phoenix: (I've already established that the button belongs to the blouse. What other leads are there..?)";
 			else {
 				usedBloodyButton = true;
-				maze.items.remove("bloodyButton");
 				maze.items.put("bloodstainedBlouse", "Pink blouse with a missing button and some bloodstains. Thought to belong to April May.");
 				return "Phoenix: The clothes drawer-- aha! A pink blouse with a button missing and a dried red stain! This is all the evidence I need to pin the blame on her.";
 			}

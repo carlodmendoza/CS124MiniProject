@@ -17,7 +17,7 @@ public class Room2 {
 		dialogue = new String[7];
 		dialogueCount = 0;
 		isDialogueFinished = false;
-		dialogue[0] = "Phoenix: This office never ceases to feel so gaudy. Perhaps I should talk to grossberg first.";
+		dialogue[0] = "Phoenix: This office never ceases to feel so gaudy. Perhaps I should talk to Grossberg first.";
 		dialogue[1] = "Grossberg: *Ah-HHHHEM!*";
 		dialogue[2] = "Phoenix: Mr. Grossberg! I\'m glad to see you. I need some help finding evidence.";
 		dialogue[3] = "Grossberg: Wright, my boy. You don\'t need a veteran like me to tell you that you have to start looking around in the field and not in other people\'s "

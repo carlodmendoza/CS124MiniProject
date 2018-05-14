@@ -63,18 +63,18 @@ public class Room8 {
 				return "Phoenix: Just as I thought... it matches Ms. May\'s blouse buttons. If it was at the crime scene, though... Ah! I see!\n" +
 					"The gap in the blood stain is heart-shaped. It\'s too good to be a coincidence, but maybe I should check that button with Luminol.";
 			}
-		} else if (item.equals("luminol")) {
-			if(maze.findItem("bloodyButton")) {
-				return "Phoenix: (I've already sprayed the button with luminol.)";
-			} else {
-				if(!maze.findItem("button")) return "Phoenix: (What am I supposed to spray this at??)";
-				if(!maze.findItem("button") && !maze.findItem("luminol")) return "Phoenix: (What..?)";
-				
-				maze.items.remove("button");
-				maze.items.put("bloodyButton", "Pink, heart-shaped, and was drenched in blood.");
-				return "Phoenix: The button has turned a ghastly blue. There\'s no mistaking it. This buttton and its perky owner was at the crime scene. "
-						+ "Sorry, Ms. May, but it looks like I\'ll have to visit your room.";
-			}
+		} 
+		else if (item.equals("luminol")) {
+			if (usedButton) {
+				if(maze.findItem("bloodyButton")) {
+					return "Phoenix: (I've already sprayed the button with luminol.)";
+				} else {
+					if(!maze.findItem("button")) return "Phoenix: (What am I supposed to spray luminol at?)";
+					maze.items.remove("button");
+					maze.items.put("bloodyButton", "Pink, heart-shaped, and was drenched in blood.");
+					return "Phoenix: The button has turned a ghastly blue. There\'s no mistaking it. This buttton and its perky owner was at the crime scene. Sorry, Ms. May, but it looks like I\'ll have to visit your room.";
+				}
+			} else return "Phoenix: (What am I supposed to spray luminol at?)";
 		}
 		else return "Phoenix: (Mia's words echoed... 'Now is not the time to use that, Phoenix!')";
 	}
