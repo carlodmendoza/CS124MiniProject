@@ -221,7 +221,6 @@ public class MazeGUI {
 		}
 		
 		MazeGUI gui = new MazeGUI();
-//		state.changeState(gui);
 		print(state.load());
 		gui.frame.setTitle("CS 124 Project");
 		gui.frame.getContentPane().setPreferredSize(new Dimension(800, 600));

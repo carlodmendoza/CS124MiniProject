@@ -21,6 +21,11 @@ public class MazeMaker implements State {
 	}
 	
 	@Override
+	public void changeState(MazeGUI gui, String user) {
+		gui.setState(new UnregisteredState());
+	}
+	
+	@Override
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
@@ -284,16 +289,5 @@ public class MazeMaker implements State {
 			if (s.equals(name)) return true;
 		}
 		return false;
-	}
-	
-	@Override
-	public void changeState(MazeGUI gui, String user) {
-		gui.setState(new UnregisteredState());
-	}
-
-	@Override
-	public int stateNumber() {
-		// TODO Auto-generated method stub
-		return 1;
 	}
 }
