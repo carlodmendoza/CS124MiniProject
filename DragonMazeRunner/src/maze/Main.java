@@ -4,7 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 
 public class Main {
-	
 	public static void main (String args[]) throws Exception {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -26,5 +25,4 @@ public class Main {
 		frame.setResizable(false);
 		frame.setVisible(true);		
 	}
-
 }
