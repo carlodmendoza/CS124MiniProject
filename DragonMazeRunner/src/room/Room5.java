@@ -39,12 +39,12 @@ public class Room5 extends Room {
 	@Command(command="take")
 	public String take(MazeMaker maze, String item) {
 		if (item.equals("button")) {
-			if(maze.findItem("button")) return "Phoenix: (I already took the button...)";
+			if(maze.items.containsKey("button")) return "Phoenix: (I already took the button...)";
 			maze.items.put("button", "Pink and heart-shaped. It doesn\'t seem remarkable, but..."); 
 			return "Phoenix: This button is pink and heart-shaped. It doesn\'t seem remarkable, but...";
 		}
 		else if (item.equals("camera")) {
-			if(maze.findItem("camera")) return "Phoenix: (I already took the camera...)";
+			if(maze.items.containsKey("camera")) return "Phoenix: (I already took the camera...)";
 			maze.items.put("camera", "A camera bag containing a high-tech DSLR. There are green fibers and red strands of hair in various parts of the bag."); 
 			return "Phoenix: This camera bag... I\'ve got a bad feeling about this... I think I know who owns this...";
 		}

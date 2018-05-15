@@ -36,7 +36,7 @@ public class Room3 extends Room {
 		if (item.equals("luminol")) {
 			maze.items.put("luminol", "Spray solution that reveals trace amounts of blood and turns them into a luminous blue."); 
 			if (dialogueCount >= dialogue.length) {
-				if (maze.findItem("luminol")) return "Phoenix: (I already took the luminol...)";
+				if (maze.items.containsKey("luminol")) return "Phoenix: (I already took the luminol...)";
 				return getDialogue();
 			}
 	    	return dialogue[dialogueCount++];

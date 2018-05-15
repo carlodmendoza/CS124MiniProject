@@ -20,7 +20,7 @@ public class Room7 extends Room {
 	@Command(command="take")
 	public String take(MazeMaker maze, String item) {
 		if (item.equals("evidenceKey")) {
-			if (maze.findItem("evidenceKey")) return "Phoenix: (I already took the key...)";
+			if (maze.items.containsKey("evidenceKey")) return "Phoenix: (I already took the key...)";
 			else {
 				maze.items.put("evidenceKey", "Key to the police station evidence room.");
 				return "Phoenix: Sorry, Edgeworth. Looks like I\'ll be borrowing this.";

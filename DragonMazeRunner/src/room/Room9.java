@@ -24,7 +24,7 @@ public class Room9 extends Room {
 		if (item.equals("screwdriver")) {
 			if (!maze.checkedDrawer) return "What screwdriver?";
 			else {
-				if (maze.findItem("screwdriver")) return "Phoenix: (I've already taken the screwdriver.)";
+				if (maze.items.containsKey("screwdriver")) return "Phoenix: (I've already taken the screwdriver.)";
 				else {
 					maze.items.put("screwdriver", "A standard, flathead screwdriver. Found in April May\'s room.");
 					return "(Screwdriver added to Court Record.)";
@@ -37,7 +37,7 @@ public class Room9 extends Room {
 	@Command(command="use")
 	public String use(MazeMaker maze, String item) {
 		if (item.equals("bloodyButton")) {
-			if (!maze.findItem("bloodyButton") && usedBloodyButton) return "Phoenix: (I've already established that the button belongs to the blouse. What other leads are there..?)";
+			if (usedBloodyButton) return "Phoenix: (I've already established that the button belongs to the blouse. What other leads are there..?)";
 			else {
 				usedBloodyButton = true;
 				maze.items.put("bloodstainedBlouse", "Pink blouse with a missing button and some bloodstains. Thought to belong to April May.");
@@ -49,7 +49,7 @@ public class Room9 extends Room {
 	
 	@Command(command="check drawer")
 	public String checkDrawer(MazeMaker maze) {
-		if (maze.findItem("screwdriver")) return "The drawer is already empty.";
+		if (maze.items.containsKey("screwdriver")) return "The drawer is already empty.";
 		if (maze.checkedDrawer) return "Phoenix: (Take the screwdriver, Phoenix!)";
 		else {
 			maze.checkedDrawer = true;

@@ -45,7 +45,7 @@ public class Room6 extends Room {
 	
 	@Command(command="give camera")
 	public String giveCamera(MazeMaker maze) {
-		if(!maze.findItem("camera") && !maze.gaveCamera) return "Phoenix: I don't even have your camera...";
+		if(!maze.items.containsKey("camera") && !maze.gaveCamera) return "Phoenix: I don't even have your camera...";
 		maze.items.remove("camera");
 		maze.gaveCamera = true;
 		if(dialogueCount >= dialogue.length) {

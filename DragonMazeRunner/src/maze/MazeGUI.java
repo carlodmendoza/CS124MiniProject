@@ -8,7 +8,7 @@ public class MazeGUI {
 	private JPanel mainPanel, commandPanel;
 	private DrawingCanvas imageArea;
 	protected JTextArea textArea;
-	private JTextField txtCommand;
+	protected JTextField txtCommand;
 	private JButton btnHelp, btnInventory, btnGo;
 	private State state;
 	

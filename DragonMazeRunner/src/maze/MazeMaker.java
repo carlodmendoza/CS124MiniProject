@@ -10,18 +10,80 @@ import anno.Direction;
 
 public class MazeMaker implements State {
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
-	public Object currentRoom;
+	private Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
-	public MazeGUI gui;
-	public String user;
+	private MazeGUI gui;
+	
+	public void setState(HashMap<Class, Object> roomMap, Object currentRoom, HashMap<String, String> items, boolean isProxy, boolean talkedToGrossberg, boolean checkedCar, boolean gaveCamera, boolean checkedDrawer, boolean gameOver) {
+		this.roomMap = roomMap;
+		this.currentRoom = currentRoom;
+		this.items = items;
+		this.isProxy = isProxy;
+		this.talkedToGrossberg = talkedToGrossberg;
+		this.checkedCar = checkedCar;
+		this.gaveCamera = gaveCamera;
+		this.checkedDrawer = checkedDrawer;
+		this.gameOver = gameOver;
+	}
+	
+//	public HashMap<Class, Object> getRoomMap() {
+//		return roomMap;
+//	}
+//
+//	public Object getCurrentRoom() {
+//		return currentRoom;
+//	}
+//
+//	public HashMap<String, String> getItems() {
+//		return items;
+//	}
+//
+//	public boolean isProxy() {
+//		return isProxy;
+//	}
+//
+//	public boolean isTalkedToGrossberg() {
+//		return talkedToGrossberg;
+//	}
+//
+//	public boolean isCheckedCar() {
+//		return checkedCar;
+//	}
+//
+//	public boolean isGaveCamera() {
+//		return gaveCamera;
+//	}
+//
+//	public boolean isCheckedDrawer() {
+//		return checkedDrawer;
+//	}
+//
+//	public boolean isGameOver() {
+//		return gameOver;
+//	}
+	
+	public Memento saveStateToMemento() {
+		return new Memento (roomMap, currentRoom, items, isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver);
+	}
+	
+	public void setStateFromMemento(Memento memento) {
+		roomMap = memento.getRoomMap();
+		currentRoom = memento.getCurrentRoom();
+		items = memento.getItems();
+		isProxy = memento.isProxy();
+		talkedToGrossberg = memento.hasTalkedToGrossberg();
+		checkedCar = memento.hasCheckedCar();
+		gaveCamera = memento.hasGivenCamera();
+		checkedDrawer = memento.hasCheckedDrawer();
+		gameOver = memento.isGameOver();
+	}
 	
 	@Override
 	public void load(MazeGUI gui, String user) throws Exception {
 		gui.setState(this);
 		gui.textArea.setText("");
 		this.gui = gui;
-		this.user = user;
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -112,6 +174,7 @@ public class MazeMaker implements State {
 								if(((EnterCondition) o).canEnter(this)) {
 									currentRoom = o;
 									gui.textArea.setText("");
+									gui.txtCommand.setText("");
 									String className = currentRoom.getClass().getSuperclass().getSimpleName();
 									if (className.equals("Room8")) items.remove("evidenceKey");
 									pw.print(((EnterCondition) o).enterMessage(className));
@@ -126,6 +189,7 @@ public class MazeMaker implements State {
 							else {
 								currentRoom = o;
 								gui.textArea.setText("");
+								gui.txtCommand.setText("");
 								pw.print(getMethod(false, "getDescription"));
 								isProxy = false;
 							}
@@ -166,7 +230,7 @@ public class MazeMaker implements State {
 				return sw.toString();
 			}
 			try {
-				if (!findItem(arr[1])) {
+				if (!items.containsKey(arr[1])) {
 					pw.println("Phoenix: (What " + arr[1] +"?)");
 					return sw.toString();
 				}
@@ -233,7 +297,7 @@ public class MazeMaker implements State {
 		
 		try {
 			for (String s : (String[]) getField(false, "items")) {
-				if (findItem(s)) continue;
+				if (items.containsKey(s)) continue;
 				pw.println(++count + ". take " + s);
 			}
 		} catch (Exception e) {
@@ -279,12 +343,5 @@ public class MazeMaker implements State {
 		
 		if (items.isEmpty()) pw.println("The court record is empty.");
 		return sw.toString();
-	}
-	
-	public boolean findItem(String name) {
-		for (String s : items.keySet()) {
-			if (s.equals(name)) return true;
-		}
-		return false;
 	}
 }

@@ -4,7 +4,7 @@ import java.io.*;
 public class MazeInterceptor {
 	
 	public static boolean canEnter(MazeMaker maze) {
-		if ((maze.findItem("screwdriver") && maze.findItem("bloodstainedBlouse")) || maze.findItem("evidenceKey")) return true;
+		if ((maze.items.containsKey("screwdriver") && maze.items.containsKey("bloodstainedBlouse")) || maze.items.containsKey("evidenceKey")) return true;
 		return false;
 	}
 	

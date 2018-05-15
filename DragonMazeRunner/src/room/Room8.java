@@ -28,7 +28,7 @@ public class Room8 extends Room {
 	@Command(command="use")
 	public String use(MazeMaker maze, String item) {
 		if (item.equals("button")) {
-			if (maze.findItem("bloodyButton")) return "Phoenix: (There's no time to waste, I should go to the murderer's hotel room. It's Room 303, Gatewater Hotel.)";
+			if (maze.items.containsKey("bloodyButton")) return "Phoenix: (There's no time to waste, I should go to the murderer's hotel room. It's Room 303, Gatewater Hotel.)";
 			if (usedButton) return "Phoenix: (There's no time to waste, I should use luminol on the button.)";
 			else {
 				usedButton = true;
@@ -38,10 +38,10 @@ public class Room8 extends Room {
 		} 
 		else if (item.equals("luminol")) {
 			if (usedButton) {
-				if(maze.findItem("bloodyButton")) {
+				if(maze.items.containsKey("bloodyButton")) {
 					return "Phoenix: (I've already sprayed the button with luminol.)";
 				} else {
-					if(!maze.findItem("button")) return "Phoenix: (What am I supposed to spray luminol at?)";
+					if(!maze.items.containsKey("button")) return "Phoenix: (What am I supposed to spray luminol at?)";
 					maze.items.remove("button");
 					maze.items.put("bloodyButton", "Pink, heart-shaped, and was drenched in blood.");
 					return "Phoenix: The button has turned a ghastly blue. There\'s no mistaking it. This buttton and its perky owner was at the crime scene. Sorry, Ms. May, but it looks like I\'ll have to visit your room.";
