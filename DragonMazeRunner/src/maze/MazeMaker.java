@@ -8,15 +8,24 @@ import java.io.*;
 import anno.Command;
 import anno.Direction;
 
-public class MazeMaker {
+public class MazeMaker implements State {
 	
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
-
-	public String load() throws Exception {
-		items.put("camera", "value");
+	public String name;
+	
+	public MazeMaker() {
+		
+	}
+		
+	public MazeMaker(String user) {
+		this.name = name;
+	}
+	
+	
+	public String startMe() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -279,5 +288,16 @@ public class MazeMaker {
 			if (s.equals(name)) return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void changeState(MazeGUI gui) {
+		gui.setState(new Register());
+	}
+
+	@Override
+	public int stateNumber() {
+		// TODO Auto-generated method stub
+		return 1;
 	}
 }

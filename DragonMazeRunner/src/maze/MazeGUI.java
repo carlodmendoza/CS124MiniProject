@@ -12,8 +12,11 @@ public class MazeGUI {
 	private static JTextArea textArea;
 	private JTextField txtCommand;
 	private JButton btnHelp, btnInventory, btnGo;
+	private static State state;
+	private static MazeGUI gui;
 	
-	public MazeGUI(MazeMaker maze) {
+	public MazeGUI() {
+		state = new Register();
 		frame = new JFrame();
 
 		mainPanel = new JPanel();
@@ -53,7 +56,7 @@ public class MazeGUI {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
-						if (maze.gameOver) {
+						if (((MazeMaker) state).gameOver) {
 							try {
 								Thread.sleep(1500);
 								System.exit(0);
@@ -61,9 +64,9 @@ public class MazeGUI {
 								Thread.currentThread().interrupt();
 							}
 						}
-						print(maze.move(txtCommand.getText()));
-						if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
-						else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
+						print(((MazeMaker) state).move(txtCommand.getText()));
+						if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
+						else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
@@ -106,7 +109,7 @@ public class MazeGUI {
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (maze.gameOver) {
+					if (((MazeMaker) state).gameOver) {
 						try {
 							Thread.sleep(1500);
 							System.exit(0);
@@ -114,9 +117,9 @@ public class MazeGUI {
 							Thread.currentThread().interrupt();
 						}
 					}
-					print(maze.move(txtCommand.getText()));
-					if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
-					else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
+					print(((MazeMaker) state).move(txtCommand.getText()));
+					if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
+					else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}			
@@ -128,13 +131,13 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (maze.isProxy) {
-						if (!(boolean)maze.getField(true, "isDialogueFinished")) print("You have to finish the conversation first.\n");
-						else print(maze.showCommands());
+					if (((MazeMaker) state).isProxy) {
+						if (!(boolean)((MazeMaker) state).getField(true, "isDialogueFinished")) print("You have to finish the conversation first.\n");
+						else print(((MazeMaker) state).showCommands());
 					}
 					else {
-						if (!(boolean)maze.getField(false, "isDialogueFinished")) print("You have to finish the conversation first.\n");
-						else print(maze.showCommands());
+						if (!(boolean)((MazeMaker) state).getField(false, "isDialogueFinished")) print("You have to finish the conversation first.\n");
+						else print(((MazeMaker) state).showCommands());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -147,7 +150,7 @@ public class MazeGUI {
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					print(maze.showItems());
+					print(((MazeMaker) state).showItems());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -168,10 +171,9 @@ public class MazeGUI {
 			e.printStackTrace();
 		}
 		
-		MazeMaker maze = new MazeMaker();
-		MazeGUI gui = new MazeGUI(maze);
-		
-		print(maze.load());
+		MazeGUI gui = new MazeGUI();
+		state.changeState(gui);
+		print(state.startMe());
 		gui.frame.setTitle("CS 124 Project");
 		gui.frame.getContentPane().setPreferredSize(new Dimension(800, 600));
 		gui.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -179,5 +181,9 @@ public class MazeGUI {
 		gui.frame.setLocationRelativeTo(null);
 		gui.frame.setResizable(false);
 		gui.frame.setVisible(true);		
+	}
+	
+	public void setState(State state) {
+		this.state = state;
 	}
 }
