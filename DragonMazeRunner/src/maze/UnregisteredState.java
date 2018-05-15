@@ -1,10 +1,10 @@
 package maze;
 
-public class Register implements State {
+public class UnregisteredState implements State {
 	private String user;
 
-	public Register() {
-		System.out.println("a new Register object was made");
+	public UnregisteredState() {
+		System.out.println("Unregistered state object made");
 	}
 	
 	@Override
@@ -19,8 +19,8 @@ public class Register implements State {
 	}
 
 	@Override
-	public String startMe() throws Exception {
+	public String load() throws Exception {
 		// TODO Auto-generated method stub
-		return "Register startMe ran";
+		return "Unregistered state object body";
 	}
 }

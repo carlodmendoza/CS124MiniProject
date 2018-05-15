@@ -25,7 +25,7 @@ public class MazeMaker implements State {
 	}
 	
 	
-	public String startMe() throws Exception {
+	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -292,7 +292,7 @@ public class MazeMaker implements State {
 	
 	@Override
 	public void changeState(MazeGUI gui) {
-		gui.setState(new Register());
+		gui.setState(new UnregisteredState());
 	}
 
 	@Override

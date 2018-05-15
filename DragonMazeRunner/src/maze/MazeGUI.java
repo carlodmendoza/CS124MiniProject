@@ -16,7 +16,7 @@ public class MazeGUI {
 	private static MazeGUI gui;
 	
 	public MazeGUI() {
-		state = new Register();
+		state = new UnregisteredState();
 		frame = new JFrame();
 
 		mainPanel = new JPanel();
@@ -173,7 +173,7 @@ public class MazeGUI {
 		
 		MazeGUI gui = new MazeGUI();
 		state.changeState(gui);
-		print(state.startMe());
+		print(state.load());
 		gui.frame.setTitle("CS 124 Project");
 		gui.frame.getContentPane().setPreferredSize(new Dimension(800, 600));
 		gui.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
