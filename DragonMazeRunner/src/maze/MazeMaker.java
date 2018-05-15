@@ -9,24 +9,19 @@ import anno.Command;
 import anno.Direction;
 
 public class MazeMaker implements State {
-	
 	private HashMap<Class, Object> roomMap = new HashMap<Class, Object>();
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
+	public MazeGUI gui;
 	public String user;
-		
-	public MazeMaker(String user) {
+	
+	@Override
+	public void load(MazeGUI gui, String user) throws Exception {
+		gui.setState(this);
+		gui.textArea.setText("");
+		this.gui = gui;
 		this.user = user;
-	}
-	
-	@Override
-	public void changeState(MazeGUI gui, String user) {
-		gui.setState(new UnregisteredState());
-	}
-	
-	@Override
-	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
 		List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -51,7 +46,7 @@ public class MazeMaker implements State {
 		}
 		
 		currentRoom = roomMap.get(room.Room1.class);
-		return "Welcome to the game, " + user + "!\n\n" + getMethod(false, "getDescription");
+		gui.print("Welcome to the game, " + user + "!\n\n" + getMethod(false, "getDescription"));
 	}
 	
 	public String getMethod(boolean isProxy, String method) throws Exception {
@@ -116,6 +111,7 @@ public class MazeMaker implements State {
 							if (o instanceof EnterCondition) {
 								if(((EnterCondition) o).canEnter(this)) {
 									currentRoom = o;
+									gui.textArea.setText("");
 									String className = currentRoom.getClass().getSuperclass().getSimpleName();
 									if (className.equals("Room8")) items.remove("evidenceKey");
 									pw.print(((EnterCondition) o).enterMessage(className));
@@ -129,6 +125,7 @@ public class MazeMaker implements State {
 							}
 							else {
 								currentRoom = o;
+								gui.textArea.setText("");
 								pw.print(getMethod(false, "getDescription"));
 								isProxy = false;
 							}

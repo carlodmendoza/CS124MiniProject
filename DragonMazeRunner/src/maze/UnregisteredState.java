@@ -3,13 +3,9 @@ package maze;
 public class UnregisteredState implements State {
 		
 	@Override
-	public void changeState(MazeGUI gui, String user) {
-		gui.setState(new MazeMaker(user));
-		gui.setRegistered();
+	public void load(MazeGUI gui, String user) throws Exception {
+		gui.setState(this);
+		gui.print("Welcome! Please register.\n");
 	}
-
-	@Override
-	public String load() throws Exception {
-		return "Welcome! Please register.\n";
-	}
+	
 }

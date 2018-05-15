@@ -5,21 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class MazeGUI {
-	
-	private JFrame frame;
 	private JPanel mainPanel, commandPanel;
-	public DrawingCanvas imageArea;
-	private static JTextArea textArea;
+	private DrawingCanvas imageArea;
+	protected JTextArea textArea;
 	private JTextField txtCommand;
 	private JButton btnHelp, btnInventory, btnGo;
-	private static State state;
-	private boolean unregistered;
+	private State state;
 	
-	public MazeGUI() {
-		frame = new JFrame();
-		state = new UnregisteredState();
-		unregistered = true;
-
+	public MazeGUI(JFrame frame) {
 		mainPanel = new JPanel();
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -57,13 +50,13 @@ public class MazeGUI {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
-						if (unregistered) {
-							if(txtCommand.getText().split(" ")[0].equals("register")) {
-								state.changeState(MazeGUI.this, txtCommand.getText().split(" ")[1]);
+						if (state instanceof UnregisteredState) {
+							if (txtCommand.getText().split(" ")[0].equals("register")) {
+								MazeMaker maze = new MazeMaker();
+								maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
 								imageArea.changeImg("1.png");
-								print(state.load());
 							}
-							else if(txtCommand.getText().equals("quit")) {
+							else if (txtCommand.getText().equals("quit")) {
 								System.exit(0);
 							}
 							else {
@@ -125,13 +118,13 @@ public class MazeGUI {
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (unregistered) {
-						if(txtCommand.getText().split(" ")[0].equals("register")) {
-							state.changeState(MazeGUI.this, txtCommand.getText().split(" ")[1]);
+					if (state instanceof UnregisteredState) {
+						if (txtCommand.getText().split(" ")[0].equals("register")) {
+							MazeMaker maze = new MazeMaker();
+							maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
 							imageArea.changeImg("1.png");
-							print(state.load());
 						}
-						else if(txtCommand.getText().equals("quit")) {
+						else if (txtCommand.getText().equals("quit")) {
 							System.exit(0);
 						}
 						else {
@@ -162,7 +155,7 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (unregistered) {
+					if (state instanceof UnregisteredState) {
 						print("Available commands:\n1. register <user>\n2. quit\n");
 					}
 					else {
@@ -185,7 +178,7 @@ public class MazeGUI {
 		commandPanel.add(btnInventory);
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				if (unregistered) {
+				if (state instanceof UnregisteredState) {
 					print("Sorry, you need to be registered before you can view the Court Record.\n");
 				}
 				else {
@@ -199,7 +192,7 @@ public class MazeGUI {
 		});
 	}
 	
-	public static void print(String in) {
+	public void print(String in) {
 		String temp = textArea.getText();
 		if (temp.equals("")) textArea.setText(in);
 		else textArea.setText(temp + "\n" + in);
@@ -207,27 +200,5 @@ public class MazeGUI {
 	
 	public void setState(State state) {
 		this.state = state;
-	}
-	
-	public void setRegistered() {
-		unregistered = false;
-	}
-	
-	public static void main (String args[]) throws Exception {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		MazeGUI gui = new MazeGUI();
-		print(state.load());
-		gui.frame.setTitle("CS 124 Project");
-		gui.frame.getContentPane().setPreferredSize(new Dimension(800, 600));
-		gui.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		gui.frame.pack();
-		gui.frame.setLocationRelativeTo(null);
-		gui.frame.setResizable(false);
-		gui.frame.setVisible(true);		
 	}
 }
