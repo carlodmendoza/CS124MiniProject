@@ -25,7 +25,7 @@ public class MazeGUI {
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
 		imageArea = new DrawingCanvas();
-		imageArea.changeImg("2.png");
+		imageArea.changeImg("0.png");
 		imageArea.setPreferredSize(new Dimension(800, 45));
 		mainPanel.add(imageArea);
 		
