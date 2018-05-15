@@ -1,15 +1,14 @@
 package maze;
 
 public class UnregisteredState implements State {
-	private String user;
-
 	public UnregisteredState() {
 		System.out.println("Unregistered state object made");
 	}
 	
 	@Override
-	public void changeState(MazeGUI gui) {
+	public void changeState(MazeGUI gui, String user) {
 		gui.setState(new MazeMaker(user));
+		gui.setRegistered();
 	}
 
 	@Override

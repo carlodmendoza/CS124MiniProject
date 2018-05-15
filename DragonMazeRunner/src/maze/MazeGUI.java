@@ -13,18 +13,19 @@ public class MazeGUI {
 	private JTextField txtCommand;
 	private JButton btnHelp, btnInventory, btnGo;
 	private static State state;
-	private static MazeGUI gui;
+	private boolean unregistered;
 	
 	public MazeGUI() {
-		state = new UnregisteredState();
 		frame = new JFrame();
+		state = new UnregisteredState();
+		unregistered = true;
 
 		mainPanel = new JPanel();
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
 		imageArea = new DrawingCanvas();
-		imageArea.changeImg("1.png");
+		imageArea.changeImg("2.png");
 		imageArea.setPreferredSize(new Dimension(800, 45));
 		mainPanel.add(imageArea);
 		
@@ -56,17 +57,32 @@ public class MazeGUI {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
-						if (((MazeMaker) state).gameOver) {
-							try {
-								Thread.sleep(1500);
+						if (unregistered) {
+							if(txtCommand.getText().split(" ")[0].equals("register")) {
+								state.changeState(MazeGUI.this, txtCommand.getText().split(" ")[1]);
+								imageArea.changeImg("1.png");
+								print(state.load());
+							}
+							else if(txtCommand.getText().equals("quit")) {
 								System.exit(0);
-							} catch (InterruptedException ie) {
-								Thread.currentThread().interrupt();
+							}
+							else {
+								print("Invalid command.\nPlease register <name> or quit.\n");
 							}
 						}
-						print(((MazeMaker) state).move(txtCommand.getText()));
-						if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
-						else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
+						else {
+							if (((MazeMaker) state).gameOver) {
+								try {
+									Thread.sleep(1500);
+									System.exit(0);
+								} catch (InterruptedException ie) {
+									Thread.currentThread().interrupt();
+								}
+							}
+							print(((MazeMaker) state).move(txtCommand.getText()));
+							if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
+							else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
@@ -109,17 +125,32 @@ public class MazeGUI {
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (((MazeMaker) state).gameOver) {
-						try {
-							Thread.sleep(1500);
+					if (unregistered) {
+						if(txtCommand.getText().split(" ")[0].equals("register")) {
+							state.changeState(MazeGUI.this, txtCommand.getText().split(" ")[1]);
+							imageArea.changeImg("1.png");
+							print(state.load());
+						}
+						else if(txtCommand.getText().equals("quit")) {
 							System.exit(0);
-						} catch (InterruptedException ie) {
-							Thread.currentThread().interrupt();
+						}
+						else {
+							print("Invalid command.\nPlease register <name> or quit.\n");
 						}
 					}
-					print(((MazeMaker) state).move(txtCommand.getText()));
-					if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
-					else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
+					else {
+						if (((MazeMaker) state).gameOver) {
+							try {
+								Thread.sleep(1500);
+								System.exit(0);
+							} catch (InterruptedException ie) {
+								Thread.currentThread().interrupt();
+							}
+						}
+						print(((MazeMaker) state).move(txtCommand.getText()));
+						if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
+						else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}			
@@ -131,13 +162,18 @@ public class MazeGUI {
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (((MazeMaker) state).isProxy) {
-						if (!(boolean)((MazeMaker) state).getField(true, "isDialogueFinished")) print("You have to finish the conversation first.\n");
-						else print(((MazeMaker) state).showCommands());
+					if (unregistered) {
+						print("Available commands:\n1. register <user>\n2. quit\n");
 					}
 					else {
-						if (!(boolean)((MazeMaker) state).getField(false, "isDialogueFinished")) print("You have to finish the conversation first.\n");
-						else print(((MazeMaker) state).showCommands());
+						if (((MazeMaker) state).isProxy) {
+							if (!(boolean)((MazeMaker) state).getField(true, "isDialogueFinished")) print("You have to finish the conversation first.\n");
+							else print(((MazeMaker) state).showCommands());
+						}
+						else {
+							if (!(boolean)((MazeMaker) state).getField(false, "isDialogueFinished")) print("You have to finish the conversation first.\n");
+							else print(((MazeMaker) state).showCommands());
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -149,10 +185,15 @@ public class MazeGUI {
 		commandPanel.add(btnInventory);
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				try {
-					print(((MazeMaker) state).showItems());
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (unregistered) {
+					print("Sorry, you need to be registered before you can view the Court Record.\n");
+				}
+				else {
+					try {
+						print(((MazeMaker) state).showItems());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -164,6 +205,14 @@ public class MazeGUI {
 		else textArea.setText(temp + "\n" + in);
 	}
 	
+	public void setState(State state) {
+		this.state = state;
+	}
+	
+	public void setRegistered() {
+		unregistered = false;
+	}
+	
 	public static void main (String args[]) throws Exception {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -172,7 +221,7 @@ public class MazeGUI {
 		}
 		
 		MazeGUI gui = new MazeGUI();
-		state.changeState(gui);
+//		state.changeState(gui);
 		print(state.load());
 		gui.frame.setTitle("CS 124 Project");
 		gui.frame.getContentPane().setPreferredSize(new Dimension(800, 600));
@@ -181,9 +230,5 @@ public class MazeGUI {
 		gui.frame.setLocationRelativeTo(null);
 		gui.frame.setResizable(false);
 		gui.frame.setVisible(true);		
-	}
-	
-	public void setState(State state) {
-		this.state = state;
 	}
 }

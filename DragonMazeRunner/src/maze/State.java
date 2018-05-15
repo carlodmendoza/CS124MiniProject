@@ -1,7 +1,7 @@
 package maze;
 
 public interface State {
-	public void changeState(MazeGUI gui);
+	public void changeState(MazeGUI gui, String user);
 	public int stateNumber();
 	public String load() throws Exception;
 }

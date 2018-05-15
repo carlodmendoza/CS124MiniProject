@@ -14,17 +14,13 @@ public class MazeMaker implements State {
 	public Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
-	public String name;
-	
-	public MazeMaker() {
-		
-	}
+	public String user;
 		
 	public MazeMaker(String user) {
-		this.name = name;
+		this.user = user;
 	}
 	
-	
+	@Override
 	public String load() throws Exception {
 		FastClasspathScanner scanner = new FastClasspathScanner("room");
 		ScanResult result = scanner.scan();
@@ -50,7 +46,7 @@ public class MazeMaker implements State {
 		}
 		
 		currentRoom = roomMap.get(room.Room1.class);
-		return getMethod(false, "getDescription");
+		return "Welcome to the game, " + user + "!\n\n" + getMethod(false, "getDescription");
 	}
 	
 	public String getMethod(boolean isProxy, String method) throws Exception {
@@ -291,7 +287,7 @@ public class MazeMaker implements State {
 	}
 	
 	@Override
-	public void changeState(MazeGUI gui) {
+	public void changeState(MazeGUI gui, String user) {
 		gui.setState(new UnregisteredState());
 	}
 
