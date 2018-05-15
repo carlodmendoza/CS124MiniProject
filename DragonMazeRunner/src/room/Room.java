@@ -1,10 +1,9 @@
 package room;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.HashMap;
 
-public class Room {
+public class Room implements Serializable {
 	protected String[] dialogue;
 	protected int dialogueCount;
 	public boolean isDialogueFinished;

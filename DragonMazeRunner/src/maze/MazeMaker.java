@@ -13,101 +13,69 @@ public class MazeMaker implements State {
 	private Object currentRoom;
 	public HashMap<String, String> items = new HashMap<String, String>();
 	public boolean isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver;
+	private String user;
 	private MazeGUI gui;
-	
-	public void setState(HashMap<Class, Object> roomMap, Object currentRoom, HashMap<String, String> items, boolean isProxy, boolean talkedToGrossberg, boolean checkedCar, boolean gaveCamera, boolean checkedDrawer, boolean gameOver) {
-		this.roomMap = roomMap;
-		this.currentRoom = currentRoom;
-		this.items = items;
-		this.isProxy = isProxy;
-		this.talkedToGrossberg = talkedToGrossberg;
-		this.checkedCar = checkedCar;
-		this.gaveCamera = gaveCamera;
-		this.checkedDrawer = checkedDrawer;
-		this.gameOver = gameOver;
-	}
-	
-//	public HashMap<Class, Object> getRoomMap() {
-//		return roomMap;
-//	}
-//
-//	public Object getCurrentRoom() {
-//		return currentRoom;
-//	}
-//
-//	public HashMap<String, String> getItems() {
-//		return items;
-//	}
-//
-//	public boolean isProxy() {
-//		return isProxy;
-//	}
-//
-//	public boolean isTalkedToGrossberg() {
-//		return talkedToGrossberg;
-//	}
-//
-//	public boolean isCheckedCar() {
-//		return checkedCar;
-//	}
-//
-//	public boolean isGaveCamera() {
-//		return gaveCamera;
-//	}
-//
-//	public boolean isCheckedDrawer() {
-//		return checkedDrawer;
-//	}
-//
-//	public boolean isGameOver() {
-//		return gameOver;
-//	}
-	
-	public Memento saveStateToMemento() {
-		return new Memento (roomMap, currentRoom, items, isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver);
-	}
-	
-	public void setStateFromMemento(Memento memento) {
-		roomMap = memento.getRoomMap();
-		currentRoom = memento.getCurrentRoom();
-		items = memento.getItems();
-		isProxy = memento.isProxy();
-		talkedToGrossberg = memento.hasTalkedToGrossberg();
-		checkedCar = memento.hasCheckedCar();
-		gaveCamera = memento.hasGivenCamera();
-		checkedDrawer = memento.hasCheckedDrawer();
-		gameOver = memento.isGameOver();
-	}
+	private Originator ot;
+	private Caretaker ct;
 	
 	@Override
 	public void load(MazeGUI gui, String user) throws Exception {
+		this.user = user;
+		this.gui = gui;
+		ot = new Originator();
+		ct = new Caretaker();
 		gui.setState(this);
 		gui.textArea.setText("");
-		this.gui = gui;
-		FastClasspathScanner scanner = new FastClasspathScanner("room");
-		ScanResult result = scanner.scan();
-		List<String> allClasses = result.getNamesOfAllStandardClasses();
+		gui.txtCommand.setText("");
 		
-		for (String className : allClasses) {
-			Class clazz = Class.forName(className);
-			Object instance = clazz.newInstance();
-			if (clazz.isAnnotationPresent(CheckEnter.class)) instance = new MazeIntercept().run(clazz);
-			roomMap.put(clazz, instance);
+		
+		try {
+			FileInputStream sessions = new FileInputStream("sessions.txt");
+			ObjectInputStream in = new ObjectInputStream(sessions);
+			ct.setSessions((HashMap<String, Memento>) in.readObject());
+			in.close();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		
-		for (Class roomClazz : roomMap.keySet()) {
-			Object currentRoom = roomMap.get(roomClazz);
-			for (Field f : roomClazz.getDeclaredFields()) {
-				if (f.isAnnotationPresent(Direction.class)) {
-					Class fieldClazz = f.getType();
-					Object roomInstance = roomMap.get(fieldClazz);
-					f.setAccessible(true);
-					f.set(currentRoom, roomInstance);
+		if (ct.getSessions().containsKey(user)) {
+			ot.setStateFromMemento(ct.load(user));
+			roomMap = ot.getRoomMap();
+			currentRoom = ot.getCurrentRoom();
+			items = ot.getItems();
+			isProxy = ot.isProxy();
+			talkedToGrossberg = ot.hasTalkedToGrossberg();
+			checkedCar = ot.hasCheckedCar();
+			gaveCamera = ot.hasGivenCamera();
+			checkedDrawer = ot.hasCheckedDrawer();
+			gameOver = ot.isGameOver();
+		}
+		else {
+			FastClasspathScanner scanner = new FastClasspathScanner("room");
+			ScanResult result = scanner.scan();
+			List<String> allClasses = result.getNamesOfAllStandardClasses();
+			
+			for (String className : allClasses) {
+				Class clazz = Class.forName(className);
+				Object instance = clazz.newInstance();
+				if (clazz.isAnnotationPresent(CheckEnter.class)) instance = new MazeIntercept().run(clazz);
+				roomMap.put(clazz, instance);
+			}
+			
+			for (Class roomClazz : roomMap.keySet()) {
+				Object currentRoom = roomMap.get(roomClazz);
+				for (Field f : roomClazz.getDeclaredFields()) {
+					if (f.isAnnotationPresent(Direction.class)) {
+						Class fieldClazz = f.getType();
+						Object roomInstance = roomMap.get(fieldClazz);
+						f.setAccessible(true);
+						f.set(currentRoom, roomInstance);
+					}
 				}
 			}
+			
+			currentRoom = roomMap.get(room.Room1.class);
 		}
-		
-		currentRoom = roomMap.get(room.Room1.class);
 		gui.print("Welcome to the game, " + user + "!\n\n" + getMethod(false, "getDescription"));
 	}
 	
@@ -251,6 +219,43 @@ public class MazeMaker implements State {
 					}
 				}
 			}
+		}
+		
+		else if (arr[0].equals("save")) {
+			ot.setState(roomMap, currentRoom, items, isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver);
+			ct.save(user, ot.saveStateToMemento());
+			pw.println("Save successful.");
+		}
+		
+		else if (arr[0].equals("load")) {
+			gui.textArea.setText("");
+			gui.txtCommand.setText("");
+			ot.setStateFromMemento(ct.load(user));
+			roomMap = ot.getRoomMap();
+			currentRoom = ot.getCurrentRoom();
+			items = ot.getItems();
+			isProxy = ot.isProxy();
+			talkedToGrossberg = ot.hasTalkedToGrossberg();
+			checkedCar = ot.hasCheckedCar();
+			gaveCamera = ot.hasGivenCamera();
+			checkedDrawer = ot.hasCheckedDrawer();
+			gameOver = ot.isGameOver();
+			pw.println("Load successful.");
+		}
+		
+		else if (arr[0].equals("quit")) {
+			try {
+				if (ct.getSessions().size() != 0) {
+					FileOutputStream sessions = new FileOutputStream("sessions.txt");
+					ObjectOutputStream out = new ObjectOutputStream(sessions);
+					out.writeObject(ct.getSessions());
+					out.close();
+				}
+				System.exit(0);
+			} catch(IOException e) {
+				e.printStackTrace();
+			}	
+			pw.println("Thank you for playing!");
 		}
 
 		else {

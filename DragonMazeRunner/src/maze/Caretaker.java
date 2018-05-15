@@ -1,9 +1,8 @@
 package maze;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
-public class Caretaker implements Serializable {
+public class Caretaker {
 	
 	private HashMap<String, Memento> sessions = new HashMap<String, Memento>();
 	
@@ -15,18 +14,11 @@ public class Caretaker implements Serializable {
 		return sessions.get(user);
 	}
 
-	public boolean exists(String user) {
-		if (sessions.containsKey(user)) return true;
-		return false;
+	public HashMap<String, Memento> getSessions() {
+		return sessions;
 	}
 	
-	public int savedSessions() {
-		return sessions.size();
+	public void setSessions(HashMap<String, Memento> sessions) {
+		this.sessions = sessions;
 	}
-
-//	public ArrayList<String> getUsers() {
-//		Set<String> userKeys = sessions.keySet();
-//		ArrayList<String> users = new ArrayList<String>(userKeys);
-//		return users;
-//	}
 }

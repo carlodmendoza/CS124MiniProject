@@ -19,7 +19,7 @@ public class Main {
 		
 		frame.setTitle("CS 124 Project");
 		frame.getContentPane().setPreferredSize(new Dimension(800, 600));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);

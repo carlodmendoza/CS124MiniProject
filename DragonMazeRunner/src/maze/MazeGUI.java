@@ -54,7 +54,8 @@ public class MazeGUI {
 							if (txtCommand.getText().split(" ")[0].equals("register")) {
 								MazeMaker maze = new MazeMaker();
 								maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
-								imageArea.changeImg("1.png");
+								if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
+								else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
 							}
 							else if (txtCommand.getText().equals("quit")) {
 								System.exit(0);
@@ -76,6 +77,8 @@ public class MazeGUI {
 							if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
 							else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
 						}
+					} catch (ArrayIndexOutOfBoundsException a) {
+						print("Register what?\n");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
@@ -122,7 +125,8 @@ public class MazeGUI {
 						if (txtCommand.getText().split(" ")[0].equals("register")) {
 							MazeMaker maze = new MazeMaker();
 							maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
-							imageArea.changeImg("1.png");
+							if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
+							else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
 						}
 						else if (txtCommand.getText().equals("quit")) {
 							System.exit(0);
@@ -144,6 +148,8 @@ public class MazeGUI {
 						if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
 						else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
 					}
+				} catch (ArrayIndexOutOfBoundsException a) {
+					print("Register what?\n");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}			
