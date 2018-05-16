@@ -1,0 +1,81 @@
+register EdSheeran
+
+
+
+
+
+goto grossbergOffice
+
+
+talkto grossberg
+
+
+
+
+
+
+goto policeStation
+
+
+
+take luminol
+
+
+
+
+
+goto parkingGarage
+
+
+
+check car
+use luminol
+goto sideRoom
+
+
+
+
+
+
+
+
+
+
+
+
+take button
+take camera
+goto forestLake
+
+
+
+
+give camera
+
+goto edgeworthOffice
+
+
+
+take evidenceKey
+
+goto evidenceRoom
+
+
+
+
+
+use button
+use luminol
+goto room303
+
+
+use bloodyButton
+check drawer
+take screwdriver
+goto court
+
+
+
+
+use bloodstainedBlouse
+use screwdriver

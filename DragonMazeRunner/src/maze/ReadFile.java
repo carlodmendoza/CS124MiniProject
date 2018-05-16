@@ -6,12 +6,10 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 public class ReadFile implements Strategy {
-
 	@Override
 	public String message() {
-		return "<filename>.txt please";
+		return "Loading file...";
 	}
-
 	@Override
 	public Object getOperation(String inputText) throws Exception {
 		try(BufferedReader br = new BufferedReader(new FileReader(inputText))) {
@@ -23,11 +21,4 @@ public class ReadFile implements Strategy {
 			return null;
 		}
 	}
-
-	@Override
-	public int getStratNumber() {
-		// TODO Auto-generated method stub
-		return 1;
-	}
-
 }
