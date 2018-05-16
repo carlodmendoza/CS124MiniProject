@@ -16,6 +16,8 @@ public class Main {
 		
 		UnregisteredState unregState = new UnregisteredState();
 		unregState.load(gui, null);
+		TypeCommand tc = new TypeCommand();
+		gui.setStrategy(tc);
 		
 		frame.setTitle("CS 124 Project");
 		frame.getContentPane().setPreferredSize(new Dimension(800, 600));

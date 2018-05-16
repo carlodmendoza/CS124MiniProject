@@ -17,6 +17,7 @@ public class MazeMaker implements State {
 	private MazeGUI gui;
 	private Originator ot;
 	private Caretaker ct;
+	private boolean registered = false;
 	
 	@Override
 	public void load(MazeGUI gui, String user) throws Exception {
@@ -27,30 +28,9 @@ public class MazeMaker implements State {
 		gui.setState(this);
 		gui.textArea.setText("");
 		gui.txtCommand.setText("");
+		File file = new File("sessions.txt");
 		
-		
-		try {
-			FileInputStream sessions = new FileInputStream("sessions.txt");
-			ObjectInputStream in = new ObjectInputStream(sessions);
-			ct.setSessions((HashMap<String, Memento>) in.readObject());
-			in.close();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		if (ct.getSessions().containsKey(user)) {
-			ot.setStateFromMemento(ct.load(user));
-			roomMap = ot.getRoomMap();
-			currentRoom = ot.getCurrentRoom();
-			items = ot.getItems();
-			isProxy = ot.isProxy();
-			talkedToGrossberg = ot.hasTalkedToGrossberg();
-			checkedCar = ot.hasCheckedCar();
-			gaveCamera = ot.hasGivenCamera();
-			checkedDrawer = ot.hasCheckedDrawer();
-			gameOver = ot.isGameOver();
-		}
-		else {
+		if (!registered) {
 			FastClasspathScanner scanner = new FastClasspathScanner("room");
 			ScanResult result = scanner.scan();
 			List<String> allClasses = result.getNamesOfAllStandardClasses();
@@ -72,10 +52,45 @@ public class MazeMaker implements State {
 						f.set(currentRoom, roomInstance);
 					}
 				}
-			}
-			
-			currentRoom = roomMap.get(room.Room1.class);
+			}		
 		}
+		
+		if (file.exists()) {
+			try {
+				FileInputStream sessions = new FileInputStream("sessions.txt");
+				ObjectInputStream in = new ObjectInputStream(sessions);
+				ct.setSessions((HashMap<String, Memento>) in.readObject());
+				in.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}					
+		}
+		
+		if (ct.getSessions().containsKey(user)) {
+			ot.setStateFromMemento(ct.load(user));
+			roomMap = ot.getRoomMap();
+			currentRoom = ot.getCurrentRoom();
+			items = ot.getItems();
+			isProxy = ot.isProxy();
+			talkedToGrossberg = ot.hasTalkedToGrossberg();
+			checkedCar = ot.hasCheckedCar();
+			gaveCamera = ot.hasGivenCamera();
+			checkedDrawer = ot.hasCheckedDrawer();
+			gameOver = ot.isGameOver();
+		} 
+		else {
+			currentRoom = roomMap.get(room.Room1.class);
+			items = new HashMap<String, String>();
+			isProxy = false;
+			talkedToGrossberg = false;
+			checkedCar = false;
+			gaveCamera = false;
+			checkedDrawer = false;
+			gameOver = false;
+		}
+		
+		if (registered) registered = false;
+		
 		gui.print("Welcome to the game, " + user + "!\n\n" + getMethod(false, "getDescription"));
 	}
 	
@@ -109,7 +124,6 @@ public class MazeMaker implements State {
 				m = clazz.getSuperclass().getDeclaredMethod(method, String.class);
 				return (String) m.invoke(currentRoom, clazz.getSimpleName());
 			}
-			
 		}
 	}
 	
@@ -221,6 +235,11 @@ public class MazeMaker implements State {
 			}
 		}
 		
+		else if (arr[0].equals("register")) {
+			registered = true;
+			load(gui, arr[1]);
+		}
+		
 		else if (arr[0].equals("save")) {
 			ot.setState(roomMap, currentRoom, items, isProxy, talkedToGrossberg, checkedCar, gaveCamera, checkedDrawer, gameOver);
 			ct.save(user, ot.saveStateToMemento());
@@ -230,16 +249,6 @@ public class MazeMaker implements State {
 		else if (arr[0].equals("load")) {
 			gui.textArea.setText("");
 			gui.txtCommand.setText("");
-			ot.setStateFromMemento(ct.load(user));
-			roomMap = ot.getRoomMap();
-			currentRoom = ot.getCurrentRoom();
-			items = ot.getItems();
-			isProxy = ot.isProxy();
-			talkedToGrossberg = ot.hasTalkedToGrossberg();
-			checkedCar = ot.hasCheckedCar();
-			gaveCamera = ot.hasGivenCamera();
-			checkedDrawer = ot.hasCheckedDrawer();
-			gameOver = ot.isGameOver();
 			pw.println("Load successful.");
 		}
 		
@@ -250,6 +259,13 @@ public class MazeMaker implements State {
 					ObjectOutputStream out = new ObjectOutputStream(sessions);
 					out.writeObject(ct.getSessions());
 					out.close();
+					
+					FileOutputStream users = new FileOutputStream("users.txt");
+					ObjectOutputStream out2 = new ObjectOutputStream(users);
+					Set<String> userKeys = ct.getSessions().keySet();
+					ArrayList<String> userList = new ArrayList<String>(userKeys);
+					out2.writeObject(userList);
+					out2.close();
 				}
 				System.exit(0);
 			} catch(IOException e) {

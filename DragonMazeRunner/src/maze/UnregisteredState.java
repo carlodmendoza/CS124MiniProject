@@ -10,20 +10,22 @@ public class UnregisteredState implements State {
 		int count = 0;
 		gui.setState(this);
 		gui.print("Welcome! Please register.\n");
-		try {
-			FileInputStream file = new FileInputStream("sessions.txt");
-			ObjectInputStream in = new ObjectInputStream(file);
-			HashMap<String, Memento> sessions = (HashMap<String, Memento>) in.readObject();
-			Set<String> userKeys = (Set<String>) sessions.keySet();
-			ArrayList<String> users = new ArrayList<String>(userKeys);
-			gui.print("Registered Users:");
-			for (String u : users) {
-				gui.print(++count + ". " + u);
-			}
-			gui.print("");
-			in.close();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}	
+		File checkfile = new File("users.txt");
+		if (checkfile.exists()) {
+			try {
+				FileInputStream file = new FileInputStream("users.txt");
+				ObjectInputStream in = new ObjectInputStream(file);
+				ArrayList<String> users = (ArrayList<String>)in.readObject();;
+				gui.print("Registered Users:");
+				for (String u : users) {
+					gui.print(++count + ". " + u);
+				}
+				gui.print("");
+				in.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}	
+		}
+		else gui.print("There are no registered users.\n");
 	}
 }

@@ -3,6 +3,7 @@ package maze;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class MazeGUI {
 	private JPanel mainPanel, commandPanel;
@@ -11,6 +12,7 @@ public class MazeGUI {
 	protected JTextField txtCommand;
 	private JButton btnHelp, btnInventory, btnGo;
 	private State state;
+	private Strategy strategy;
 	
 	public MazeGUI(JFrame frame) {
 		mainPanel = new JPanel();
@@ -50,33 +52,7 @@ public class MazeGUI {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
-						if (state instanceof UnregisteredState) {
-							if (txtCommand.getText().split(" ")[0].equals("register")) {
-								MazeMaker maze = new MazeMaker();
-								maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
-								if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
-								else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
-							}
-							else if (txtCommand.getText().equals("quit")) {
-								System.exit(0);
-							}
-							else {
-								print("Invalid command.\nPlease register <name> or quit.\n");
-							}
-						}
-						else {
-							if (((MazeMaker) state).gameOver) {
-								try {
-									Thread.sleep(1500);
-									System.exit(0);
-								} catch (InterruptedException ie) {
-									Thread.currentThread().interrupt();
-								}
-							}
-							print(((MazeMaker) state).move(txtCommand.getText()));
-							if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
-							else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
-						}
+						inputParser();
 					} catch (ArrayIndexOutOfBoundsException a) {
 						print("Register what?\n");
 					} catch (Exception e) {
@@ -121,33 +97,7 @@ public class MazeGUI {
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				try {
-					if (state instanceof UnregisteredState) {
-						if (txtCommand.getText().split(" ")[0].equals("register")) {
-							MazeMaker maze = new MazeMaker();
-							maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
-							if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
-							else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
-						}
-						else if (txtCommand.getText().equals("quit")) {
-							System.exit(0);
-						}
-						else {
-							print("Invalid command.\nPlease register <name> or quit.\n");
-						}
-					}
-					else {
-						if (((MazeMaker) state).gameOver) {
-							try {
-								Thread.sleep(1500);
-								System.exit(0);
-							} catch (InterruptedException ie) {
-								Thread.currentThread().interrupt();
-							}
-						}
-						print(((MazeMaker) state).move(txtCommand.getText()));
-						if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
-						else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
-					}
+					inputParser();
 				} catch (ArrayIndexOutOfBoundsException a) {
 					print("Register what?\n");
 				} catch (Exception e) {
@@ -198,6 +148,54 @@ public class MazeGUI {
 		});
 	}
 	
+	public void inputParser() throws Exception {
+		if (state instanceof UnregisteredState) {
+			if (txtCommand.getText().split(" ")[0].equals("register")) {
+				MazeMaker maze = new MazeMaker();
+				maze.load(MazeGUI.this, txtCommand.getText().split(" ")[1]);
+				if (maze.isProxy) imageArea.changeImg(maze.getMethod(true, "getRoomImg"));
+				else imageArea.changeImg(maze.getMethod(false, "getRoomImg"));
+			}
+			else if (txtCommand.getText().equals("quit")) {
+				System.exit(0);
+			}
+			else {
+				print("Invalid command.\nPlease register <name> or quit.\n");
+			}
+		}
+		else {
+			if (strategy instanceof TypeCommand) {
+				if (((MazeMaker) state).gameOver) {
+					try {
+						Thread.sleep(1500);
+						System.exit(0);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+					}
+				}
+				String x = (String) strategy.getOperation(txtCommand.getText());
+				if (x.equals("run")) {
+					ReadFile rf = new ReadFile();
+					setStrategy(rf);
+					print(strategy.message());
+				}
+				print(((MazeMaker) state).move(x));
+				if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg"));
+				else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg"));
+			}
+			else {
+				ArrayList<String> sts = (ArrayList<String>) strategy.getOperation("./perfect.txt"); 
+				for(String s : sts) { 
+					print(((MazeMaker) state).move(s)); 
+					if (((MazeMaker) state).isProxy) imageArea.changeImg(((MazeMaker) state).getMethod(true, "getRoomImg")); 
+					else imageArea.changeImg(((MazeMaker) state).getMethod(false, "getRoomImg")); 
+				}
+				TypeCommand tc = new TypeCommand();
+				setStrategy(tc);
+			}
+		}
+	}
+	
 	public void print(String in) {
 		String temp = textArea.getText();
 		if (temp.equals("")) textArea.setText(in);
@@ -206,5 +204,9 @@ public class MazeGUI {
 	
 	public void setState(State state) {
 		this.state = state;
+	}
+	
+	public void setStrategy(Strategy strategy) {
+		this.strategy = strategy;
 	}
 }

@@ -14,6 +14,7 @@ public class MazeIntercept {
 		
 		DynamicType.Builder<Object> builder = byteBuddy.subclass(clazz).implement(EnterCondition.class);
 
+		builder = builder.name(clazz.getName() + "$ByteBuddy$").serialVersionUid((long) clazz.getName().hashCode());
 		builder = builder.method(ElementMatchers.named("canEnter")).intercept(MethodDelegation.to(MazeInterceptor.class));		
 		builder = builder.method(ElementMatchers.named("enterMessage")).intercept(MethodDelegation.to(MazeInterceptor.class));
 		builder = builder.method(ElementMatchers.named("unableToEnterMessage")).intercept(MethodDelegation.to(MazeInterceptor.class));
